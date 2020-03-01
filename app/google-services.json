@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "575446829790",
+    "firebase_url": "https://health-partner-c4302.firebaseio.com",
+    "project_id": "health-partner-c4302",
+    "storage_bucket": "health-partner-c4302.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:575446829790:android:449c01caa6428e63f6904f",
+        "android_client_info": {
+          "package_name": "com.geforce.vijai.healthpartner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "575446829790-i8sli9dp9lne559o8llq5rkegvls3n0k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.geforce.vijai.healthpartner",
+            "certificate_hash": "5d29f7f171a8737f978c15c470023f5c1549fc3e"
+          }
+        },
+        {
+          "client_id": "575446829790-jobpo9r46mdogimv3qpfuhffgaatip30.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAR0iQarDDUJJGocbFz8TmES5uoVcLpYC4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "575446829790-jobpo9r46mdogimv3qpfuhffgaatip30.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

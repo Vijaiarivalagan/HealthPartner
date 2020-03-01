@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.geforce.vijai.healthpartner.ui.home.HomeFragment"
+        android:label="@string/menu_home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/nav_exerciseid"
+        android:name="com.geforce.vijai.healthpartner.ui.exercise.ExerciseFragment"
+        android:label="@string/menu_exercise"
+        tools:layout="@layout/fragment_exercise" />
+
+    <fragment
+        android:id="@+id/nav_tips"
+        android:name="com.geforce.vijai.healthpartner.ui.tips.TipsFragment"
+        android:label="@string/menu_tips"
+        tools:layout="@layout/fragment_tips" />
+
+    <fragment
+        android:id="@+id/nav_report"
+        android:name="com.geforce.vijai.healthpartner.ui.Report.ReportFragment"
+        android:label="@string/menu_report"
+        tools:layout="@layout/fragment_report" />
+
+    <fragment
+        android:id="@+id/nav_profile"
+        android:name="com.geforce.vijai.healthpartner.ui.Profile.ShareFragment"
+        android:label="@string/menu_profile"
+        tools:layout="@layout/fragment_share" />
+
+    <fragment
+        android:id="@+id/nav_send"
+        android:name="com.geforce.vijai.healthpartner.ui.send.SendFragment"
+        android:label="@string/menu_about"
+        tools:layout="@layout/fragment_send" />
+</navigation>

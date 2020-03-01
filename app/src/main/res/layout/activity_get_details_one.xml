@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    tools:context=".GetDetailsOne">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="279dp"
+        android:layout_height="54dp"
+        android:layout_marginTop="52dp"
+        android:gravity="center"
+        android:text="We are near to you. but we need your valuables to predict your required calorie"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="341dp"
+        android:layout_height="491dp"
+        android:background="@color/colorPrimaryDark"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/activity_horizontal_margin"
+        android:layout_margin="25dp"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <EditText
+            android:id="@+id/gheight"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_weight="0.0005"
+            android:hint="Height"
+            android:inputType="number"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textColor="@android:color/white" />
+
+        <EditText
+            android:id="@+id/gweight"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_weight="0.0005"
+            android:hint="Weight"
+            android:inputType="number"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textColor="@android:color/white" />
+
+        <EditText
+            android:id="@+id/gage"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_weight="0.0005"
+            android:hint="age"
+            android:inputType="number"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textColor="@android:color/white" />
+
+
+        <Spinner
+            android:id="@+id/ggender"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_weight="0.0005"
+            android:entries="@array/gender"/>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/gnext"
+        android:layout_width="230dp"
+        android:layout_height="51dp"
+        android:layout_marginBottom="24dp"
+        android:text="Next"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

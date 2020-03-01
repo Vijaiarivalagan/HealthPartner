@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CameraActivity">
+
+
+    <TextureView
+        android:id="@+id/texture"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/btn_takepicture"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        tools:layout_editor_absoluteX="-16dp"
+        tools:layout_editor_absoluteY="302dp" />
+
+
+    <Button
+        android:id="@+id/btn_takepicture"
+        android:layout_width="78dp"
+        android:layout_height="80dp"
+        android:layout_gravity="bottom|center"
+        android:layout_marginBottom="30dp"
+        android:background="@drawable/round_btn" />
+
+    <ImageView
+        android:id="@+id/exitid"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_gravity="bottom|right"
+        android:layout_marginRight="50dp"
+        android:layout_marginBottom="57dp"
+        app:srcCompat="@drawable/exit_arrow" />
+
+    <ImageView
+        android:id="@+id/flashid"
+        android:layout_width="61dp"
+        android:layout_height="48dp"
+        android:layout_gravity="top|right"
+        app:srcCompat="@drawable/flash_light" />
+
+</FrameLayout>
