@@ -31,7 +31,7 @@
 
     <fragment
         android:id="@+id/nav_profile"
-        android:name="com.geforce.vijai.healthpartner.ui.Profile.ShareFragment"
+        android:name="com.geforce.vijai.healthpartner.ui.Profile.ProfileFragment"
         android:label="@string/menu_profile"
         tools:layout="@layout/fragment_share" />
 

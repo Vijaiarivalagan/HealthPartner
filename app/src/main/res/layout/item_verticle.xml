@@ -11,13 +11,13 @@
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:background="@color/colorPrimary"
+        app:layout_constraintHorizontal_bias="0.0"
         >
 
         <TextView
             android:id="@+id/titleid"
             android:layout_width="300dp"
             android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
             android:gravity="center"
             android:text="Title"
             android:layout_weight="1"
@@ -25,16 +25,16 @@
             android:textColor="@color/white"
             android:textSize="20dp"
             android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintVertical_bias="0.0"/>
 
         <ImageView
+            android:id="@+id/addfoods"
             android:layout_width="110dp"
             android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            android:layout_gravity="right"
-            android:layout_marginRight="6dp"
-            android:paddingRight="2dp"
+            android:layout_marginRight="2dp"
             android:layout_weight="1"
+            android:paddingRight="2dp"
             android:src="@android:drawable/ic_menu_add"
             app:layout_constraintVertical_bias="1.0" />
     </LinearLayout>

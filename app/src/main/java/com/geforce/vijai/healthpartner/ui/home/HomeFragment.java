@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -28,13 +29,13 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class HomeFragment extends Fragment {
 
-    FirebaseFirestore db;
-    SharedPreferences pref;
-    RecyclerView verticleRecyclerView;
-    VerticleRecyclerViewAdapter adapter;
-    ArrayList<VerticleModel> arrayListVerticle;
-    String email;
-    List<HorizontalModel> horilist;
+    private FirebaseFirestore db;
+    private SharedPreferences pref;
+    private RecyclerView verticleRecyclerView;
+    private VerticleRecyclerViewAdapter adapter;
+    private ArrayList<VerticleModel> arrayListVerticle;
+    private String email;
+    private List<HorizontalModel> horilist;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -45,7 +46,7 @@ public class HomeFragment extends Fragment {
         db=FirebaseFirestore.getInstance();
         pref= this.getActivity().getSharedPreferences("user", MODE_PRIVATE);
         email=pref.getString("email",null);
-
+        Toast.makeText(getActivity(),"email id"+email,Toast.LENGTH_SHORT);
 
         arrayListVerticle=new ArrayList<>();
 

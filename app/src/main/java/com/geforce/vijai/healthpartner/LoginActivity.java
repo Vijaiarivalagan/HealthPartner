@@ -8,30 +8,37 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.geforce.vijai.healthpartner.ui.home.HorizontalModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 
 public class LoginActivity extends AppCompatActivity {
     SharedPreferences pref;
+    SharedPreferences.Editor editor;
     private EditText inputEmail, inputPassword;
     private FirebaseAuth auth;
     private ProgressBar progressBar;
     private Button btnSignup, btnLogin, btnReset;
-
+    private FirebaseFirestore db;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        Toast.makeText(this,"login page",Toast.LENGTH_SHORT).show();
+
+        db=FirebaseFirestore.getInstance();
         pref= getSharedPreferences("user", MODE_PRIVATE);
         //Get Firebase auth instance
         auth = FirebaseAuth.getInstance();
@@ -106,17 +113,48 @@ public class LoginActivity extends AppCompatActivity {
                                         Toast.makeText(LoginActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
                                     }
                                 } else {
-                                    SharedPreferences.Editor editor = pref.edit();
-                                    editor.putString("email",email);
-                                    editor.commit();
-                                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                                    startActivity(intent);
-                                    finish();
+
+                                        getUserDetail();
+
                                 }
                             }
                         });
             }
         });
+    }
+
+    private void getUserDetail() {
+        db.collection("users").document(inputEmail.getText().toString())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document=task.getResult();
+                            if(document !=null){
+
+                                Toast.makeText(getApplicationContext(),inputEmail.getText().toString(),Toast.LENGTH_SHORT);
+                                Toast.makeText(getApplicationContext(),document.getString("gender")+" "+document.getDouble("calorie"),Toast.LENGTH_SHORT);
+                                editor = pref.edit();
+                                editor.putString("email",inputEmail.getText().toString());
+                                editor.putString("name",document.getString("name"));
+                                editor.putString("genderValue",document.getString("gender"));
+                                editor.putFloat("calorie",document.getDouble("calorie").floatValue());
+                                editor.putFloat("heightValue",document.getDouble("height").floatValue());
+                                editor.putFloat("weightValue",document.getDouble("weight").floatValue());
+                                editor.putInt("ageValue",document.getDouble("age").intValue());
+                                editor.commit();
+                                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                                startActivity(intent);
+                                finish();
+
+                            }
+
+                        } else {
+                            Log.d("error", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
     }
 }
 

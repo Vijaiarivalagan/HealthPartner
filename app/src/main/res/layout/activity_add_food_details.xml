@@ -1,34 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".AddFoodDetails">
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+
+
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/foodnameid"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:gravity="center|left"
-                android:text="Food Name"
+                android:hint="Food Name"
+                android:text="upuma"
                 android:textSize="20sp" />
-        <EditText
-            android:id="@+id/editText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text="Name" />
 
-        </LinearLayout>
-    </ScrollView>
+            <EditText
+                android:id="@+id/qty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="qty"
+                android:inputType="textPersonName" />
+            <Button
+                android:id="@+id/addfoodtolistid"
+                android:layout_height="40dp"
+                android:layout_width="match_parent"
+                android:text="ADD FOOD"
+                android:background="@color/colorPrimary"/>
 
 
-</androidx.appcompat.widget.LinearLayoutCompat>
+
+</LinearLayout>

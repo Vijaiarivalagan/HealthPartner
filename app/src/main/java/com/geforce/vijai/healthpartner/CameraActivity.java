@@ -142,7 +142,7 @@ public class CameraActivity extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 takePicture();
-                startActivity(new Intent(CameraActivity.this, HomeActivity.class));
+                startActivity(new Intent(CameraActivity.this, AddFoodDetails.class));
                 finish();
             }
         });
@@ -396,7 +396,7 @@ public class CameraActivity extends AppCompatActivity{
     @Override
     protected void onPause()  {
         Log.d(TAG, "onPause");
-        //closeCamera();
+        closeCamera();
         super.onPause();
         stopBackgroundThread();
 
