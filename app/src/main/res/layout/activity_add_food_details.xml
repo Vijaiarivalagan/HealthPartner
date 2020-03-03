@@ -7,7 +7,10 @@
     android:orientation="vertical"
     tools:context=".AddFoodDetails">
 
-
+            <ImageView
+                android:id="@+id/takenimgid"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"/>
             <TextView
                 android:id="@+id/foodnameid"
                 android:layout_width="match_parent"

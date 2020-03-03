@@ -3,19 +3,26 @@ package com.geforce.vijai.healthpartner;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.Calendar;
 
 public class AddFoodDetails extends AppCompatActivity {
     private TextView foodName;
     private EditText qty;
     private Button addFoodToList;
+    private ImageView foodimg;
+    String path,session;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,15 +30,23 @@ public class AddFoodDetails extends AppCompatActivity {
 
         setContentView(R.layout.activity_add_food_details);
 
-        Toast.makeText(getApplicationContext(),getIntent().getStringExtra("filename"),Toast.LENGTH_SHORT).show();
         foodName=(TextView)findViewById(R.id.foodnameid);
         qty=(EditText)findViewById(R.id.qty);
         addFoodToList=(Button)findViewById(R.id.addfoodtolistid);
+        foodimg=(ImageView)findViewById(R.id.takenimgid);
+
+         path = Environment.getExternalStorageDirectory()
+                +"/HealthPartner/Photos";
+        Bitmap bitmap = BitmapFactory.decodeFile(path+"/"+"savedpic.jpg");
+        foodimg.setImageBitmap(bitmap);
+        session=getsession();
 
         addFoodToList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                File file = new File(path);
+                File myFile = new File(file,"savedpic.jpg");
+                myFile.delete();
             }
         });
     }

@@ -194,8 +194,8 @@ public class CameraActivity extends AppCompatActivity{
                 jpegSizes = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.JPEG);
             }
             //custom size for image
-            int width = 640;
-            int height = 480;
+            int width = 300;
+            int height = 300;
             if (jpegSizes != null && 0 < jpegSizes.length) {
                 width = jpegSizes[0].getWidth();
                 height = jpegSizes[0].getHeight();
@@ -214,7 +214,10 @@ public class CameraActivity extends AppCompatActivity{
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
 
             //file
-            final File file = new File(Environment.getExternalStorageDirectory()+"/"+ UUID.randomUUID().toString()+"pic.jpg");
+            String root = Environment.getExternalStorageDirectory().toString();
+            File myDir = new File(root + "/HealthPartner/Photos");
+            myDir.mkdirs();
+            final File file = new File(myDir, "savedpic.jpg");
             ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
                 @Override
                 public void onImageAvailable(ImageReader reader) {
@@ -252,7 +255,7 @@ public class CameraActivity extends AppCompatActivity{
                 @Override
                 public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
                     super.onCaptureCompleted(session, request, result);
-                    Toast.makeText(getApplicationContext(), "Saved:" + file, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Saved:", Toast.LENGTH_SHORT).show();
                     createCameraPreview();
                 }
             };
