@@ -54,12 +54,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.security.Policy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-public class CameraActivity extends AppCompatActivity{
+public class CameraActivity extends AppCompatActivity {
 
     private static final String TAG = "AndroidCameraApi";
     private Button takePictureButton;
@@ -115,6 +116,7 @@ public class CameraActivity extends AppCompatActivity{
         exit=(ImageView)findViewById(R.id.exitid);
         flash=(ImageView)findViewById(R.id.flashid);
         assert textureView != null;
+
         TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
             @Override
             public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
@@ -151,6 +153,12 @@ public class CameraActivity extends AppCompatActivity{
             public void onClick(View v) {
                 startActivity(new Intent(CameraActivity.this, HomeActivity.class));
                 finish();
+            }
+        });
+        flash.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
     }
@@ -194,8 +202,8 @@ public class CameraActivity extends AppCompatActivity{
                 jpegSizes = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.JPEG);
             }
             //custom size for image
-            int width = 300;
-            int height = 300;
+            int width = 64;
+            int height = 64;
             if (jpegSizes != null && 0 < jpegSizes.length) {
                 width = jpegSizes[0].getWidth();
                 height = jpegSizes[0].getHeight();
@@ -332,6 +340,7 @@ public class CameraActivity extends AppCompatActivity{
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
             openCamera();
+
         }
 
         @Override
@@ -405,67 +414,3 @@ public class CameraActivity extends AppCompatActivity{
 
     }
 }
-/*
-import android.content.pm.ActivityInfo;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.hardware.Camera;
-import android.os.Environment;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle; import android.util.Log;
-import android.view.View; import android.widget.Button;
-import android.widget.FrameLayout; import android.widget.ImageView;
-import android.widget.Toast; import java.io.File; import java.io.FileNotFoundException;
-import java.io.FileOutputStream; import java.io.OutputStream; import java.text.DateFormat;
-import java.text.SimpleDateFormat; import java.util.Date; import java.util.Random;
-
-public class MainActivity extends ActionBarActivity {
-    int i;
-    private ImageSurfaceView mImageSurfaceView;
-    private Camera camera;
-    private FrameLayout cameraPreviewLayout;
-    private ImageView capturedImageHolder;
-    Button captureButton;
-    @Override protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        i=0;
-        setContentView(R.layout.activity_main);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        cameraPreviewLayout = (FrameLayout)findViewById(R.id.camera_preview);
-        capturedImageHolder = (ImageView)findViewById(R.id.captured_image);
-        camera = checkDeviceCamera();
-        mImageSurfaceView = new ImageSurfaceView(MainActivity.this, camera);
-        cameraPreviewLayout.addView(mImageSurfaceView);
-        captureButton = (Button)findViewById(R.id.button);
-        captureButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v) {
-                camera.takePicture(null, null, pictureCallback);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        while (!Thread.interrupted())
-                            try {
-                                Thread.sleep(5000);
-                                }
-                            if (i==4){
-                                break;
-                            }
-                        }
-                        i++;
-                            runOnUiThread(new Runnable()
-                    // start actions in UI thread {
-                    @Override
-                    public void run() { camera.takePicture(null, null, pictureCallback);
-                    } } });
-        } catch (InterruptedException e)
-        { // ooops }
-             } }).start(); } }); } private Camera checkDeviceCamera(){ Camera mCamera = null; try { mCamera = Camera.open(); } catch (Exception e) { e.printStackTrace(); } return mCamera; } Camera.PictureCallback pictureCallback = new Camera.PictureCallback() { Bitmap alteredBitmap; Canvas canvas; @Override public void onPictureTaken(byte[] data, Camera camera) { Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length); if(bitmap==null){ Toast.makeText(MainActivity.this, “Captured image is empty”, Toast.LENGTH_LONG).show(); return; } File sdDir = Environment .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES); if(!sdDir.exists()&&sdDir.mkdir()){ Log.i(“error”,”Can’t creat directory to save image”); Toast.makeText(getApplicationContext(), “Can’t creat directory to save image”, Toast.LENGTH_SHORT).show(); return; } SimpleDateFormat dateFormat=new SimpleDateFormat(“yyyymmddhhmmss”); String date = dateFormat.format(new Date()); String photoFile = “Picture_” + date + “.jpg”; String filename = sdDir.getPath() + File.separator + photoFile; File pictureFile = new File(filename); try { FileOutputStream fos = new FileOutputStream(pictureFile); bitmap.compress(Bitmap.CompressFormat.JPEG,100,fos); fos.close(); Toast.makeText(MainActivity.this, “New Image saved:” + photoFile, Toast.LENGTH_LONG).show(); } catch (Exception error) { Log.i(“one”, “File” + filename + “not saved: ” + error.getMessage()); Toast.makeText(MainActivity.this, “Image could not be saved.”, Toast.LENGTH_LONG).show(); } capturedImageHolder.setImageBitmap(scaleDownBitmapImage(bitmap, 300, 200 )); } }; private Bitmap scaleDownBitmapImage(Bitmap bitmap, int newWidth, int newHeight){ Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true); return resizedBitmap; } }
-            }
-*/

@@ -1,39 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+
     tools:context=".AddFoodDetails">
 
-            <ImageView
-                android:id="@+id/takenimgid"
-                android:layout_width="match_parent"
-                android:layout_height="250dp"/>
-            <TextView
-                android:id="@+id/foodnameid"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:gravity="center|left"
-                android:hint="Food Name"
-                android:text="upuma"
-                android:textSize="20sp" />
+    <ImageView
+        android:id="@+id/takenimgid"
+        android:layout_width="405dp"
+        android:layout_height="198dp"
+        android:layout_marginTop="4dp"
+        android:layout_weight="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-            <EditText
-                android:id="@+id/qty"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="qty"
-                android:inputType="textPersonName" />
-            <Button
-                android:id="@+id/addfoodtolistid"
-                android:layout_height="40dp"
-                android:layout_width="match_parent"
-                android:text="ADD FOOD"
-                android:background="@color/colorPrimary"/>
+    <TextView
+        android:id="@+id/foodnameid"
+        android:layout_width="188dp"
+        android:layout_height="34dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="204dp"
+        android:layout_weight="1"
+        android:gravity="center|start"
+        android:hint="Food Name"
+        android:text="upuma"
+        android:textSize="25dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.842"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/takenimgid" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="73dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sessionspinner">
+
+        <SeekBar
+            android:id="@+id/qty"
+            android:layout_width="222dp"
+            android:layout_height="73dp"
+            android:layout_marginBottom="232dp"
+            android:layout_weight="1"
+            android:max="500"
+            android:progress="100"
+            android:progressDrawable="@drawable/seekbargradient"
+            android:thumb="@drawable/fsize"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/foodnameid"
+            app:layout_constraintVertical_bias="0.068" />
+
+        <TextView
+            android:id="@+id/qtytextview"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="100"
+            android:textSize="20dp"
+            app:layout_constraintBottom_toBottomOf="@+id/qty"
+            app:layout_constraintStart_toEndOf="@+id/qty"
+            app:layout_constraintTop_toTopOf="@+id/qty"
+            app:layout_constraintVertical_bias="0.437" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/addfoodtolistid"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginBottom="1dp"
+        android:background="@color/colorPrimary"
+        android:text="ADD FOOD"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Spinner
+        android:id="@+id/sessionspinner"
+        android:layout_width="181dp"
+        android:layout_height="64dp"
+        android:entries="@array/session"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.075"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/foodnameid" />
 
 
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

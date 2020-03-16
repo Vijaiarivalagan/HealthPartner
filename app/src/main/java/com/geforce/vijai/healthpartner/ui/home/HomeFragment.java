@@ -6,6 +6,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,7 +26,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -36,18 +42,35 @@ public class HomeFragment extends Fragment {
     private ArrayList<VerticleModel> arrayListVerticle;
     private String email;
     private List<HorizontalModel> horilist;
+    private TextView tvexer,totaltv;
+    private Button addexer;
+    private EditText getexer;
+    private ProgressBar Pb;
+    Date date;
+    int breakfast,lunch,dinner,calorie,c;
+    SimpleDateFormat sdf=new SimpleDateFormat("dd-MM-yyyy");
+
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 
 
-        //Get Firebase auth instance
+
         db=FirebaseFirestore.getInstance();
         pref= this.getActivity().getSharedPreferences("user", MODE_PRIVATE);
         email=pref.getString("email",null);
-        Toast.makeText(getActivity(),"email id"+email,Toast.LENGTH_SHORT);
+        calorie=(int)pref.getFloat("calorie",0);
 
+        tvexer=(TextView)root.findViewById(R.id.tvexer);
+        addexer=(Button)root.findViewById(R.id.addexer);
+        getexer=(EditText)root.findViewById(R.id.getexer);
+        Pb=(ProgressBar)root.findViewById(R.id.breakfastpb);
+        totaltv=(TextView)root.findViewById(R.id.totaltvid);
+        totaltv.setText(c+"/"+calorie);
+
+        Pb.setMax(calorie);
         arrayListVerticle=new ArrayList<>();
 
         verticleRecyclerView= (RecyclerView) root.findViewById(R.id.recyclerView);
@@ -58,7 +81,9 @@ public class HomeFragment extends Fragment {
         verticleRecyclerView.setAdapter(adapter);
 
 
-        db.collection("calories").document(email).collection("22-02-2020")
+        date= new Date();
+        String datestring=sdf.format(date);
+        db.collection("calories").document(email).collection(datestring)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -69,16 +94,47 @@ public class HomeFragment extends Fragment {
 
                             horilist = task.getResult().toObjects(HorizontalModel.class);
                             setData(horilist);
+                            setProgress(horilist);
                         } else {
                             Log.d("error", "Error getting documents: ", task.getException());
                         }
                     }
                 });
 
+        /*addexer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int min=Integer.parseInt(getexer.getText().toString());
+                tvexer.setText(String.valueOf(min*2));
+            }
+        });*/
+        /*for(HorizontalModel hh:horilist){
+            c+=hh.getCalorie();
+            if(hh.getFood_session().equalsIgnoreCase("BreakFast")){
+                breakfast+=hh.getCalorie();
+            }
+            else if(hh.getFood_session().equalsIgnoreCase("Lunch")){
+                lunch+=hh.getCalorie();
+            }
+            else if(hh.getFood_session().equalsIgnoreCase("Dinner")){
+                dinner+=hh.getCalorie();
+            }
+        }
+        Pb.setProgress(c);
+        totaltv.setText(c+"/"+calorie);
+*/
 
         return root;
     }
 
+    public void setProgress(List<HorizontalModel> horilist1){
+        for(HorizontalModel hh:horilist) {
+            c += hh.getCalorie();
+        }
+        Pb.setProgress(c);
+
+        totaltv.setText(c+"/"+calorie);
+    }
 
     public void setData(List<HorizontalModel> horilist1){
         for(int i=1;i<=3;i++){

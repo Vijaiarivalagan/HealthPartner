@@ -58,8 +58,8 @@ public class VerticleRecyclerViewAdapter extends RecyclerView.Adapter<VerticleRe
         holder.addFood.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(context, AddFoodDetails.class);
-                intent.putExtra("session",title);
+                Intent intent=new Intent(context, CameraActivity.class);
+                //intent.putExtra("session",title);
                 context.startActivity(intent);
             }
         });
