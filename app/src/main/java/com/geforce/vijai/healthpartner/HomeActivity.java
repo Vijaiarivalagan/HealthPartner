@@ -75,6 +75,7 @@ public class HomeActivity extends AppCompatActivity implements SensorEventListen
 //check and download new version of ml model from mlkit
         FirebaseCustomRemoteModel remoteModel =
                 new FirebaseCustomRemoteModel.Builder("food_classifier").build();
+
         FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder()
                 .build();
         FirebaseModelManager.getInstance().download(remoteModel, conditions)

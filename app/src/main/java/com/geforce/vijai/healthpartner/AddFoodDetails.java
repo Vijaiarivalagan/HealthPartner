@@ -52,7 +52,8 @@ public class AddFoodDetails extends AppCompatActivity {
     private ImageView foodimg;
     private int qtyeditvalue,qtysetvalue, progressChangedValue = 100;;
     private float calPerGram;
-    String path,sessionStringValue,email;
+    String path=Environment.getExternalStorageDirectory()
+            +"/HealthPartner/Photos",sessionStringValue,email;
     int session;
     private Spinner sessionspinner;
     FirebaseFirestore db;
@@ -91,8 +92,6 @@ public class AddFoodDetails extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
 
-        path = Environment.getExternalStorageDirectory()
-                +"/HealthPartner/Photos";
         Bitmap bitmap = BitmapFactory.decodeFile(path+"/"+"savedpic.jpg");
         foodimg.setImageBitmap(bitmap);
 
@@ -191,7 +190,14 @@ private FirebaseModelInterpreter getModelInterpreter(
 
     //main method fr model, starting point...............
 private void runInference() throws FirebaseMLException {
-    FirebaseModelInterpreter firebaseInterpreter = getModelInterpreter(remoteModel,localModel);
+
+    FirebaseModelInterpreter interpreter;
+        FirebaseModelInterpreterOptions options =
+                new FirebaseModelInterpreterOptions.Builder(localModel).build();
+        interpreter = FirebaseModelInterpreter.getInstance(options);
+
+
+    FirebaseModelInterpreter firebaseInterpreter = interpreter;
     float[][][][] input = bitmapToInputArray();
     FirebaseModelInputOutputOptions inputOutputOptions = createInputOutputOptions();
 
@@ -206,6 +212,8 @@ private void runInference() throws FirebaseMLException {
                         public void onSuccess(FirebaseModelOutputs result) {
                             // [START_EXCLUDE]
                             // [START mlkit_read_result]
+                            Toast.makeText(getApplicationContext(),result.toString(),Toast.LENGTH_SHORT);
+                            System.out.println("result is: "+result+"result cls: "+result.getClass()+"res out: "+result.getOutput(0));
                             float[][] output = result.getOutput(0);
                             float[] probabilities = output[0];
                             System.out.println("output is:"+output+"ans is : "+probabilities);
@@ -219,8 +227,8 @@ private void runInference() throws FirebaseMLException {
                     new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            // Task failed with an exception
-                            // ...
+                            Toast.makeText(getApplicationContext(),"error in tf interpreter",Toast.LENGTH_SHORT).show();
+
                         }
                     });
     // [END mlkit_run_inference]
