@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/colorPrimaryDark"
+    tools:context=".GetDetailsExtra">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="279dp"
+        android:layout_height="54dp"
+        android:layout_gravity="center"
+        android:textColor="@color/white"
+        android:text="We provide food suggestion based on these values if you want.."
+        android:layout_marginTop="10dp"/>
+
+    <LinearLayout
+        android:layout_width="337dp"
+        android:layout_height="384dp"
+        android:layout_gravity="center"
+        android:layout_margin="10dp"
+        android:background="@color/colorPrimary"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@+id/bp_heading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="0.5"
+            android:fadeScrollbars="false"
+            android:paddingTop="10dp"
+            android:textColor="@color/white"
+            android:text="Blood Pressure"
+            android:textSize="18dp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/gsystol"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_weight="1"
+            android:hint="@string/hint_systol"
+            android:textColorHint="@color/white"
+            android:inputType="number"
+            android:textColor="@android:color/white" />
+
+        <EditText
+            android:id="@+id/gdiastol"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_weight="1"
+            android:hint="@string/hint_diastol"
+            android:textColorHint="@color/white"
+            android:inputType="number"
+
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:id="@+id/diabetes_heading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="0.5"
+            android:paddingTop="10dp"
+            android:text="Diabetes"
+            android:textColor="#000000"
+            android:textSize="18dp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/gbeforeMeal"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_weight="1"
+            android:hint="@string/hint_beforemeal"
+            android:inputType="number"
+            android:textColorHint="@color/white"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textColor="@android:color/white" />
+
+
+        <EditText
+            android:id="@+id/gaftermeal"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_weight="1"
+            android:hint="@string/hint_aftermeal"
+            android:inputType="number"
+            android:textColorHint="@color/white"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textColor="@android:color/white" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/gnext"
+        android:layout_width="230dp"
+        android:layout_height="51dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp"
+        android:textColor="#000000"
+        android:text="Next"
+     />
+
+    <TextView
+        android:id="@+id/skip"
+        android:layout_width="63dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="15dp"
+        android:layout_gravity="right"
+        android:text="skip>>"
+        android:textColor="#000000"
+        android:textSize="21dp"
+        android:textStyle="bold"
+     />
+
+</LinearLayout>

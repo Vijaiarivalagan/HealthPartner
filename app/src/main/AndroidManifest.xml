@@ -4,7 +4,6 @@
     package="com.geforce.vijai.healthpartner">
 
     <uses-permission android:name="android.permission.INTERNET" /> <!-- To auto-complete the email text field in the login form with the user's emails -->
-
     <uses-permission android:name="android.hardware.camera2.full" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -23,11 +22,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".BpReport"
-            ></activity>
-        <activity android:name=".DiabetesReport" />
-        <activity android:name=".CalorieReport" />
-        <activity android:name=".AddFoodDetails" />
+        <activity android:name=".ReportSteps"></activity>
+        <activity
+            android:name=".GetDetailsExtra"
+            android:label="@string/udetails"></activity>
+        <activity
+            android:name=".ReportBp"
+            android:label="@string/bpreport" />
+        <activity
+            android:name=".ReportDiabetes"
+            android:label="@string/bsugarreport" />
+        <activity
+            android:name=".ReportCalorie"
+            android:label="@string/caloriereport" />
+        <activity
+            android:name=".AddFoodDetails"
+            android:label="@string/addfood" />
         <activity
             android:name=".HomeActivity"
             android:label="@string/title_activity_home"
@@ -58,11 +68,11 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".GetDetailsTwo"
-            android:label="User Details"
+            android:label="@string/udetails"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".GetDetailsOne"
-            android:label="User Details"
+            android:label="@string/udetails"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
 

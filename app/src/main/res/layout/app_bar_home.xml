@@ -22,7 +22,10 @@
 
     <include
         layout="@layout/content_home"
-        android:layout_height="622dp" />
+        android:layout_height="match_parent"
+        >
+
+    </include>
 
     <!--<com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"

@@ -70,7 +70,7 @@ public class AddFoodDetails extends AppCompatActivity {
         setContentView(R.layout.activity_add_food_details);
 
         //ml part
-        remoteModel = new FirebaseCustomRemoteModel.Builder("food_classifier").build();
+        /*remoteModel = new FirebaseCustomRemoteModel.Builder("food_classifier").build();
         localModel= new FirebaseCustomLocalModel.Builder()
                 .setAssetFilePath("food_classifier.tflite")
                 .build();
@@ -80,7 +80,7 @@ public class AddFoodDetails extends AppCompatActivity {
         } catch (FirebaseMLException e) {
             System.out.println("error in runintference"+e.toString());
             e.printStackTrace();
-        }
+        }*/
         //end ml part
 
         foodName=(TextView)findViewById(R.id.foodnameid);
@@ -127,11 +127,10 @@ public class AddFoodDetails extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
                 sessionStringValue=sessionspinner.getSelectedItem().toString();
-                //male =0  , female =1
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                sessionspinner.setPrompt("Gender value is needed!!");
+                sessionspinner.setPrompt("Select appropriate one!!");
             }
         });
 
@@ -160,7 +159,7 @@ public class AddFoodDetails extends AppCompatActivity {
     }
 //=========================================================================================================
     //model start
-
+/*
 // get the available model interpreter
 private FirebaseModelInterpreter getModelInterpreter(
         final FirebaseCustomRemoteModel remoteModel,
@@ -257,10 +256,10 @@ private void runInference() throws FirebaseMLException {
         return input;
     }
 
-    /*private Bitmap getYourInputImage() {
+    private Bitmap getYourInputImage() {
         // This method is just for show
         return Bitmap.createBitmap(0, 0, Bitmap.Config.ALPHA_8);
-    }*/
+    }
 
     private FirebaseModelInputOutputOptions createInputOutputOptions() throws FirebaseMLException {
         // [START mlkit_create_io_options]
@@ -272,7 +271,7 @@ private void runInference() throws FirebaseMLException {
         // [END mlkit_create_io_options]
 
         return inputOutputOptions;
-    }
+    }*/
     //========================================================================================================================
 
 

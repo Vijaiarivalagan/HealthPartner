@@ -16,7 +16,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class GetDetailsOne extends AppCompatActivity {
 
-    private FirebaseAuth auth;
+    //private FirebaseAuth auth;
     SharedPreferences pref;
     EditText height,weight,age;
     Spinner gender;
@@ -31,7 +31,7 @@ public class GetDetailsOne extends AppCompatActivity {
         setContentView(R.layout.activity_get_details_one);
 
         //Get Firebase auth instance
-        auth = FirebaseAuth.getInstance();
+        //auth = FirebaseAuth.getInstance();
         pref= getSharedPreferences("user", MODE_PRIVATE);
 
         height=(EditText)findViewById(R.id.gheight);
@@ -70,7 +70,7 @@ public class GetDetailsOne extends AppCompatActivity {
                         editor.commit();
 
                         Log.i("getdetail---1--------",heightValue+" "+weightValue+" "+ageValue+" "+genderValue);
-                        Intent i = new Intent(GetDetailsOne.this, GetDetailsTwo.class);
+                        Intent i = new Intent(GetDetailsOne.this, GetDetailsExtra.class);
                         startActivity(i);
                         finish();
                     }

@@ -5,9 +5,10 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="2dp">
+    android:padding="2dp"
+    android:layout_marginRight="2dp">
     <LinearLayout
-        android:layout_height="50dp"
+        android:layout_height="43dp"
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:background="@color/colorPrimary"
@@ -18,15 +19,15 @@
             android:id="@+id/titleid"
             android:layout_width="300dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:gravity="center"
             android:text="Title"
-            android:layout_weight="1"
             android:textAlignment="center"
             android:textColor="@color/white"
-            android:textSize="20dp"
+            android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintVertical_bias="0.0"/>
+            app:layout_constraintVertical_bias="0.0" />
 
         <ImageView
             android:id="@+id/addfoods"

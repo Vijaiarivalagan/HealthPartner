@@ -24,6 +24,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 public class LoginActivity extends AppCompatActivity {
     SharedPreferences pref;
@@ -33,6 +36,8 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private Button btnSignup, btnLogin, btnReset;
     private FirebaseFirestore db;
+    SimpleDateFormat sdf=new SimpleDateFormat("dd-MM-yyyy");
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -143,6 +148,11 @@ public class LoginActivity extends AppCompatActivity {
                                 editor.putFloat("heightValue",document.getDouble("height").floatValue());
                                 editor.putFloat("weightValue",document.getDouble("weight").floatValue());
                                 editor.putInt("ageValue",document.getDouble("age").intValue());
+                                editor.putFloat("systolValue",document.getDouble("systol").floatValue());
+                                editor.putFloat("diastolValue",document.getDouble("diastol").floatValue());
+                                editor.putFloat("befMealValue",document.getDouble("beforeMeal").floatValue());
+                                editor.putFloat("aftMealValue",document.getDouble("afterMeal").floatValue());
+                                editor.putString("beforedate",sdf.format(new Date()));
                                 editor.commit();
                                 Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                                 startActivity(intent);

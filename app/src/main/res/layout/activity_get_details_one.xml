@@ -1,36 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
+    android:orientation="vertical"
+    android:background="@color/colorPrimaryDark"
     tools:context=".GetDetailsOne">
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="279dp"
         android:layout_height="54dp"
-        android:layout_marginTop="52dp"
-        android:gravity="center"
-        android:text="We are near to you. but we need your valuables to predict your required calorie"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginTop="15dp"
+        android:layout_gravity="center"
+        android:text="We are near to you. need some valuables to predict your required calorie"
+        android:textColor="@color/white"
+         />
 
     <LinearLayout
-        android:layout_width="341dp"
-        android:layout_height="491dp"
-        android:background="@color/colorPrimaryDark"
-        android:gravity="center"
+        android:layout_width="347dp"
+        android:layout_height="405dp"
+        android:layout_gravity="center"
+        android:layout_margin="10dp"
+        android:layout_marginTop="15dp"
+        android:background="@color/colorPrimary"
         android:orientation="vertical"
-        android:padding="@dimen/activity_horizontal_margin"
-        android:layout_margin="25dp"
-
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:padding="5dp">
 
         <EditText
             android:id="@+id/gheight"
@@ -41,7 +37,8 @@
             android:inputType="number"
             android:maxLines="1"
             android:singleLine="true"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            android:textColorHint="@color/white" />
 
         <EditText
             android:id="@+id/gweight"
@@ -52,7 +49,8 @@
             android:inputType="number"
             android:maxLines="1"
             android:singleLine="true"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            android:textColorHint="#000000" />
 
         <EditText
             android:id="@+id/gage"
@@ -63,7 +61,8 @@
             android:inputType="number"
             android:maxLines="1"
             android:singleLine="true"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            android:textColorHint="@color/white" />
 
 
         <Spinner
@@ -71,20 +70,20 @@
             android:layout_width="match_parent"
             android:layout_height="20dp"
             android:layout_weight="0.0005"
-            android:entries="@array/gender"/>
+            android:entries="@array/gender" />
 
     </LinearLayout>
 
     <Button
         android:id="@+id/gnext"
         android:layout_width="230dp"
-        android:layout_height="51dp"
-        android:layout_marginBottom="24dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_weight="0"
         android:text="Next"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_gravity="center"
+        >
 
+    </Button>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

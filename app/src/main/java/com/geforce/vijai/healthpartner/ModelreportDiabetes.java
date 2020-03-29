@@ -1,11 +1,14 @@
 package com.geforce.vijai.healthpartner;
-public class bpReportModel {
+
+import java.util.Date;
+
+public class ModelreportDiabetes {
     long date;
     int value;
     String type;
 
-    public bpReportModel(){}
-    public bpReportModel(long date, int value, String type) {
+    public ModelreportDiabetes(){}
+    public ModelreportDiabetes(long date, int value, String type) {
         this.date = date;
         this.value = value;
         this.type = type;

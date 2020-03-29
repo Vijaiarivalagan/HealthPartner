@@ -1,54 +1,36 @@
 package com.geforce.vijai.healthpartner;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
-import android.util.TypedValue;
-import android.view.View;
-
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.firestore.DocumentId;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.ml.common.modeldownload.FirebaseModelDownloadConditions;
-import com.google.firebase.ml.common.modeldownload.FirebaseModelManager;
-import com.google.firebase.ml.custom.FirebaseCustomRemoteModel;
-
 import androidx.drawerlayout.widget.DrawerLayout;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 import android.view.Menu;
 import android.widget.TextView;
-import android.widget.Toast;
-
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class HomeActivity extends AppCompatActivity implements SensorEventListener,StepListener  {
 
-    SharedPreferences st,pref;
+    SharedPreferences pref;
+    SharedPreferences.Editor editor;
     private AppBarConfiguration mAppBarConfiguration;
     private StepDetector simpleStepDetector;
     private SensorManager sensorManager;
@@ -57,44 +39,11 @@ public class HomeActivity extends AppCompatActivity implements SensorEventListen
     TextView TvSteps,TvsGoal;
     FirebaseFirestore db;
     String email;
-    Date d;
+    SimpleDateFormat sdf=new SimpleDateFormat("dd-MM-yyyy");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        st= getSharedPreferences("steps", MODE_PRIVATE);
-        pref=getSharedPreferences("user",MODE_PRIVATE);
-        TvSteps=(TextView)findViewById(R.id.tvstep);
-        TvsGoal=(TextView)findViewById(R.id.tvgoal);
-        TvsGoal.setText("Step Goal: "+"10000");
-        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        accel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        simpleStepDetector = new StepDetector();
-        simpleStepDetector.registerListener(HomeActivity.this);
-
-//check and download new version of ml model from mlkit
-        FirebaseCustomRemoteModel remoteModel =
-                new FirebaseCustomRemoteModel.Builder("food_classifier").build();
-
-        FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder()
-                .build();
-        FirebaseModelManager.getInstance().download(remoteModel, conditions)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                      Toast.makeText(getApplicationContext(),"model downloaded",Toast.LENGTH_SHORT).show();
-                    }
-                });
-//===========================================================
-        db = FirebaseFirestore.getInstance();
-
-        email=pref.getString("email",null);
-        numSteps = 0;
-        sensorManager.registerListener(HomeActivity.this, accel, SensorManager.SENSOR_DELAY_FASTEST);
-        d=new Date();
-        TvSteps.setText(String.valueOf(st.getInt("stepcount",0)));
-
-
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -106,6 +55,7 @@ public class HomeActivity extends AppCompatActivity implements SensorEventListen
                         .setAction("Action", null).show();
             }
         });*/
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -118,8 +68,121 @@ public class HomeActivity extends AppCompatActivity implements SensorEventListen
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+
+        pref=getSharedPreferences("user",MODE_PRIVATE);
+        db = FirebaseFirestore.getInstance();
+
+        TvSteps=(TextView)findViewById(R.id.tvstep);
+        TvsGoal=(TextView)findViewById(R.id.tvgoal);
+        TvsGoal.setText("Goal: "+"10000");
+
+        email=pref.getString("email",null);
+        numSteps = 0;
+
+        //for sensor
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        accel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        simpleStepDetector = new StepDetector();
+        simpleStepDetector.registerListener(HomeActivity.this);
+
+        numSteps=pref.getInt("dailyStepcount",0);
+        TvSteps.setText(String.valueOf(numSteps));
+
+
+        //save daily calorie and steps
+        //String oldDateString=pref.getString("beforedate",null);
+
+        Date oldDate= null;
+        int daysbetween=0;
+        /*try {
+            oldDate = sdf.parse(oldDateString);
+            long diff=(new Date().getTime())-(oldDate.getTime());
+            daysbetween=(int)(diff / (1000*60*60*24));
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }*/
+
+        long diff=(new Date().getTime())-(1584713639000l);
+        daysbetween=(int)(diff / (1000*60*60*24));
+        if(daysbetween>=1){
+
+            saveStepsAndCalorieToDb();
+            //after send to db reset the values to zero
+            editor = pref.edit();
+            editor.putInt("dailyCalorie",0);
+            editor.putInt("dailyStepcount",0);
+            editor.putString("beforedate",sdf.format(new Date()));
+            editor.commit();
+            numSteps=0;
+        }
+
+
+
+        sensorManager.registerListener(HomeActivity.this, accel, SensorManager.SENSOR_DELAY_FASTEST);
+
+        System.out.println("mail "+email);
+        System.out.println("name "+pref.getString("name",null));
+        System.out.println("height "+pref.getFloat("heightValue",0.0f));
+        System.out.println("weight "+pref.getFloat("weightValue",0.0f));
+        System.out.println("age "+pref.getInt("ageValue",0));
+        System.out.println("gender "+pref.getString("genderValue",null));
+        System.out.println("systolValue "+pref.getFloat("systolValue",0.0f));
+        System.out.println("diastolValue "+pref.getFloat("diastolValue",0.0f));
+        System.out.println("befMealValue "+pref.getFloat("befMealValue",0.0f));
+        System.out.println("aftMealValue "+pref.getFloat("aftMealValue",0.0f));
+        System.out.println("exer "+pref.getString("exercise",null));
+        System.out.println("cal "+pref.getInt("dailyCalorie",0));
+        System.out.println("cal "+pref.getInt("dailyStepcount",0));
+
+
     }
 
+    // save daily calorie & steps to firestore
+    private void saveStepsAndCalorieToDb() {
+
+        //save calories to calorie reports
+        Map<String,Object> calorieReport=new HashMap<>();
+        calorieReport.put("calorie",pref.getInt("dailyCalorie",0));
+        calorieReport.put("date",new Date().getTime());
+        System.out.println("calorie today"+pref.getInt("dailyCalorie",0));
+
+        String calorieid=db.collection("reports_others").document(email).collection("reportcalorie").document().getId();
+        db.collection("reports_others").document(email).collection("reportcalorie").document(calorieid).set(calorieReport).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.i("calorie report","success");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                        Log.i("calorie report","failed");
+                    }
+        });
+
+        //save steps to steps reports
+        Map<String,Object> stepsReport=new HashMap<>();
+        stepsReport.put("steps",numSteps);
+        stepsReport.put("date",new Date().getTime());
+        System.out.println("step today"+numSteps);
+
+        String stepsid=db.collection("reports_others").document(email).collection("steps").document().getId();
+        db.collection("reports_others").document(email).collection("steps").document(stepsid).set(stepsReport).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.i("steps report","success");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.i("steps report","failed");
+            }
+        });
+
+    }
+
+    //navigation view
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -133,6 +196,8 @@ public class HomeActivity extends AppCompatActivity implements SensorEventListen
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
+
+
 
     //step counter
     @Override
@@ -150,24 +215,17 @@ public class HomeActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public void step(long timeNs) {
         numSteps++;
+        TvSteps.setText("Today: "+numSteps);
 
-        TvSteps.setText("Steps: "+numSteps);
-        //Toast.makeText(this," "+numSteps+TEXT_NUM_STEPS ,Toast.LENGTH_SHORT).show();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putInt("stepcount",numSteps);
+        editor = pref.edit();
+        System.out.println(numSteps);
+        editor.putInt("dailyStepcount",numSteps);
+        editor.commit();
 
-          //Query qq=db.collection("steps")
-            //    .orderBy("date");
-
-
-        /*Map<String, Object> user = new HashMap<>();
-        user.put("date", );
-        user.put(NAME_KEY,n);
-        db.collection("reports_others").document(email).collection("reportcalorie").add()*/
     }
 }

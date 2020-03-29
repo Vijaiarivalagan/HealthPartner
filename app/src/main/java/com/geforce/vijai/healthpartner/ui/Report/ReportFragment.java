@@ -9,14 +9,15 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.geforce.vijai.healthpartner.BpReport;
-import com.geforce.vijai.healthpartner.CalorieReport;
-import com.geforce.vijai.healthpartner.DiabetesReport;
+import com.geforce.vijai.healthpartner.ReportBp;
+import com.geforce.vijai.healthpartner.ReportCalorie;
+import com.geforce.vijai.healthpartner.ReportDiabetes;
 import com.geforce.vijai.healthpartner.R;
+import com.geforce.vijai.healthpartner.ReportSteps;
 
 public class ReportFragment extends Fragment {
 
-    private ImageView calorie,bp,diabets;
+    private ImageView calorie,bp,diabets,steps;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -25,25 +26,31 @@ public class ReportFragment extends Fragment {
         calorie=(ImageView)root.findViewById(R.id.caloriebtn);
         bp=(ImageView)root.findViewById(R.id.bloodpressurebtn);
         diabets=(ImageView)root.findViewById(R.id.diabetsbtn);
-
+        steps=(ImageView)root.findViewById(R.id.stepbtn);
         calorie.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), CalorieReport.class));
+                startActivity(new Intent(getActivity(), ReportCalorie.class));
             }
         });
 
         diabets.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), DiabetesReport.class));
+                startActivity(new Intent(getActivity(), ReportDiabetes.class));
             }
         });
 
         bp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), BpReport.class));
+                startActivity(new Intent(getActivity(), ReportBp.class));
+            }
+        });
+        steps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), ReportSteps.class));
             }
         });
         return root;
