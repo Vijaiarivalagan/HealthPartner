@@ -3,13 +3,16 @@ package com.geforce.vijai.healthpartner;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -21,6 +24,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.geforce.vijai.healthpartner.ui.home.HomeFragment;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -36,12 +45,27 @@ import com.google.firebase.ml.custom.FirebaseModelInterpreter;
 import com.google.firebase.ml.custom.FirebaseModelInterpreterOptions;
 import com.google.firebase.ml.custom.FirebaseModelOutputs;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.net.ssl.HttpsURLConnection;
 
 
 public class AddFoodDetails extends AppCompatActivity {
@@ -60,10 +84,31 @@ public class AddFoodDetails extends AppCompatActivity {
     SharedPreferences pref;
     Date date;
     SimpleDateFormat sdf=new SimpleDateFormat("dd-MM-yyyy");
-
+    Bitmap bitmap;
     FirebaseCustomRemoteModel remoteModel;
     FirebaseCustomLocalModel localModel;
     FirebaseModelInterpreter interpreter;
+
+
+    //added for image upload
+    String ServerUploadPath ="http://health-partner-c4302.appspot.com/predict" ;
+    ProgressDialog progressDialog ;
+    ByteArrayOutputStream byteArrayOutputStream ;
+    byte[] byteArray ;
+    String ConvertImage ;
+    HttpURLConnection httpURLConnection ;
+    URL url;
+    OutputStream outputStream;
+    BufferedWriter bufferedWriter ;
+    int RC ;
+    BufferedReader bufferedReader ;
+    StringBuilder stringBuilder;
+    boolean check = true;
+
+    //added for volley
+    JSONObject jsonObject;
+    RequestQueue rQueue;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,7 +137,7 @@ public class AddFoodDetails extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
 
-        Bitmap bitmap = BitmapFactory.decodeFile(path+"/"+"savedpic.jpg");
+        bitmap = BitmapFactory.decodeFile(path+"/"+"savedpic.jpg");
         foodimg.setImageBitmap(bitmap);
 
         pref= getSharedPreferences("user", MODE_PRIVATE);
@@ -134,6 +179,7 @@ public class AddFoodDetails extends AppCompatActivity {
             }
         });
 
+        uploadImage(bitmap);
         //submit button
         addFoodToList.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -142,6 +188,7 @@ public class AddFoodDetails extends AppCompatActivity {
                 String foodnametosend=foodName.getText().toString();
                 int calorievalue=progressChangedValue;
                 String sessiontosend=sessionStringValue;
+
 
                 //update to db
                 uploadfoodtodb(foodnametosend,calorievalue,sessiontosend);
@@ -322,4 +369,175 @@ private void runInference() throws FirebaseMLException {
         }
         return 0;
     }
+
+    private void uploadImage(Bitmap bitmap){
+        System.out.println("url is "+ServerUploadPath);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+        String encodedImage = Base64.encodeToString(byteArrayOutputStream.toByteArray(), Base64.DEFAULT);
+        try {
+            jsonObject = new JSONObject();
+            jsonObject.put("image", encodedImage);
+            // jsonObject.put("aa", "aa");
+        } catch (JSONException e) {
+            Log.e("JSONObject Here", e.toString());
+        }
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, ServerUploadPath, jsonObject,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject jsonObject) {
+                        Log.e("aaaaaaa", jsonObject.toString());
+                        rQueue.getCache().clear();
+                        Toast.makeText(getApplication(), "Image Uploaded Successfully", Toast.LENGTH_SHORT).show();
+                        System.out.println("url image upload success");
+                        try {
+                            foodName.setText(jsonObject.getString("image_class"));
+                            System.out.println("url json parsing failed");
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(getApplication(), "json parsing failed", Toast.LENGTH_SHORT).show();
+                            System.out.println("url json parsing failed");
+
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                Log.e("aaaaaaa", volleyError.toString());
+                Toast.makeText(getApplication(), "image error response", Toast.LENGTH_SHORT).show();
+                System.out.println("url image response failed error");
+            }
+        });
+
+        rQueue = Volley.newRequestQueue(AddFoodDetails.this);
+        rQueue.add(jsonObjectRequest);
+
+    }
+
+    /*public void UploadImageToServer(){
+
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+
+        byteArray = byteArrayOutputStream.toByteArray();
+
+        ConvertImage = Base64.encodeToString(byteArray, Base64.DEFAULT);
+
+        class AsyncTaskUploadClass extends AsyncTask<Void,Void,String> {
+
+            @Override
+            protected void onPreExecute() {
+
+                super.onPreExecute();
+                Toast.makeText(getApplicationContext(),"on pre execute",Toast.LENGTH_LONG).show();
+
+                //progressDialog = ProgressDialog.show(fertilizer_upload.this,"Image is Uploading","Please Wait",false,false);
+            }
+
+            @Override
+            protected void onPostExecute(String string1) {
+
+                super.onPostExecute(string1);
+
+                //progressDialog.dismiss();
+
+                Toast.makeText(getApplicationContext(),string1,Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            protected String doInBackground(Void... params) {
+
+                ImageProcessClass imageProcessClass = new ImageProcessClass();
+
+                HashMap<String,String> HashMapParams = new HashMap<String,String>();
+                HashMapParams.put("image", ConvertImage);
+                String FinalData = imageProcessClass.ImageHttpRequest(ServerUploadPath, HashMapParams);
+
+                return FinalData;
+            }
+        }
+        AsyncTaskUploadClass AsyncTaskUploadClassOBJ = new AsyncTaskUploadClass();
+        AsyncTaskUploadClassOBJ.execute();
+    }
+
+
+    public class ImageProcessClass{
+
+        public String ImageHttpRequest(String requestURL,HashMap<String, String> PData) {
+
+            StringBuilder stringBuilder = new StringBuilder();
+
+            try {
+                url = new URL(requestURL);
+
+                httpURLConnection = (HttpURLConnection) url.openConnection();
+
+                httpURLConnection.setReadTimeout(20000);
+
+                httpURLConnection.setConnectTimeout(20000);
+
+                httpURLConnection.setRequestMethod("POST");
+
+                httpURLConnection.setDoInput(true);
+
+                httpURLConnection.setDoOutput(true);
+
+                outputStream = httpURLConnection.getOutputStream();
+
+                bufferedWriter = new BufferedWriter(
+
+                        new OutputStreamWriter(outputStream, "UTF-8"));
+
+                bufferedWriter.write(bufferedWriterDataFN(PData));
+
+                bufferedWriter.flush();
+
+                bufferedWriter.close();
+
+                outputStream.close();
+
+                RC = httpURLConnection.getResponseCode();
+
+                if (RC == HttpsURLConnection.HTTP_OK) {
+
+                    bufferedReader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
+
+                    stringBuilder = new StringBuilder();
+
+                    String RC2;
+
+                    while ((RC2 = bufferedReader.readLine()) != null){
+
+                        stringBuilder.append(RC2);
+                    }
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return stringBuilder.toString();
+        }
+
+        private String bufferedWriterDataFN(HashMap<String, String> HashMapParams) throws UnsupportedEncodingException {
+
+            stringBuilder = new StringBuilder();
+
+            for (Map.Entry<String, String> KEY : HashMapParams.entrySet()) {
+                if (check)
+                    check = false;
+                else
+                    stringBuilder.append("&");
+
+                stringBuilder.append(URLEncoder.encode(KEY.getKey(), "UTF-8"));
+
+                stringBuilder.append("=");
+
+                stringBuilder.append(URLEncoder.encode(KEY.getValue(), "UTF-8"));
+            }
+
+            return stringBuilder.toString();
+        }
+
+    }*/
+
 }

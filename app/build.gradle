@@ -52,6 +52,9 @@ dependencies {
 //mpchart
     implementation "com.github.Philjay:MPAndroidChart:${var}"
 
+    //volley
+    implementation 'com.android.volley:volley:1.1.1'
+
     //load image from url
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'

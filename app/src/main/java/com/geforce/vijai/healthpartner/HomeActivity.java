@@ -91,21 +91,19 @@ public class HomeActivity extends AppCompatActivity implements SensorEventListen
 
 
         //save daily calorie and steps
-        //String oldDateString=pref.getString("beforedate",null);
 
+        String oldDateString=pref.getString("beforedate",null);
         Date oldDate= null;
         int daysbetween=0;
-        /*try {
+        try {
             oldDate = sdf.parse(oldDateString);
             long diff=(new Date().getTime())-(oldDate.getTime());
             daysbetween=(int)(diff / (1000*60*60*24));
 
         } catch (ParseException e) {
             e.printStackTrace();
-        }*/
+        }
 
-        long diff=(new Date().getTime())-(1584713639000l);
-        daysbetween=(int)(diff / (1000*60*60*24));
         if(daysbetween>=1){
 
             saveStepsAndCalorieToDb();
