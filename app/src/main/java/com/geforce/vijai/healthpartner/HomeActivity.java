@@ -1,5 +1,6 @@
 package com.geforce.vijai.healthpartner;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -25,6 +26,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class HomeActivity extends AppCompatActivity implements SensorEventListener,StepListener  {
@@ -35,11 +37,13 @@ public class HomeActivity extends AppCompatActivity implements SensorEventListen
     private StepDetector simpleStepDetector;
     private SensorManager sensorManager;
     private Sensor accel;
-    private int numSteps;
-    TextView TvSteps,TvsGoal;
+    private int numSteps,stepgoal;
+    TextView TvSteps,TvsGoal,TvCal;
     FirebaseFirestore db;
     String email;
+    @SuppressLint("SimpleDateFormat")
     SimpleDateFormat sdf=new SimpleDateFormat("dd-MM-yyyy");
+    @SuppressLint("DefaultLocale")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,9 +79,11 @@ public class HomeActivity extends AppCompatActivity implements SensorEventListen
 
         TvSteps=(TextView)findViewById(R.id.tvstep);
         TvsGoal=(TextView)findViewById(R.id.tvgoal);
-        TvsGoal.setText("Goal: "+"10000");
+        TvCal=(TextView)findViewById(R.id.tvcal);
+        TvsGoal.setText("Goal: %d"+10000);
 
         email=pref.getString("email",null);
+        //stepgoal=pref.getInt("stepGoal",0);
         numSteps = 0;
 
         //for sensor
@@ -112,7 +118,7 @@ public class HomeActivity extends AppCompatActivity implements SensorEventListen
             editor.putInt("dailyCalorie",0);
             editor.putInt("dailyStepcount",0);
             editor.putString("beforedate",sdf.format(new Date()));
-            editor.commit();
+            editor.apply();
             numSteps=0;
         }
 
@@ -137,6 +143,24 @@ public class HomeActivity extends AppCompatActivity implements SensorEventListen
 
     }
 
+
+    //navigation view
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.home, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
+                || super.onSupportNavigateUp();
+    }
+
+
+
     // save daily calorie & steps to firestore
     private void saveStepsAndCalorieToDb() {
 
@@ -155,8 +179,8 @@ public class HomeActivity extends AppCompatActivity implements SensorEventListen
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                        Log.i("calorie report","failed");
-                    }
+                Log.i("calorie report","failed");
+            }
         });
 
         //save steps to steps reports
@@ -180,21 +204,6 @@ public class HomeActivity extends AppCompatActivity implements SensorEventListen
 
     }
 
-    //navigation view
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.home, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
-                || super.onSupportNavigateUp();
-    }
-
 
 
     //step counter
@@ -210,11 +219,12 @@ public class HomeActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
+    @SuppressLint("DefaultLocale")
     @Override
     public void step(long timeNs) {
         numSteps++;
-        TvSteps.setText("Today: "+numSteps);
-
+        TvSteps.setText(String.format("Today: %d", numSteps));
+        TvCal.setText(String.valueOf(numSteps*0.4));
     }
 
     @Override
@@ -223,7 +233,7 @@ public class HomeActivity extends AppCompatActivity implements SensorEventListen
         editor = pref.edit();
         System.out.println(numSteps);
         editor.putInt("dailyStepcount",numSteps);
-        editor.commit();
+        editor.apply();
 
     }
 }

@@ -22,10 +22,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ReportSteps"></activity>
+        <activity android:name=".ShowTips"></activity>
+        <activity android:name=".ReportSteps" />
         <activity
             android:name=".GetDetailsExtra"
-            android:label="@string/udetails"></activity>
+            android:label="@string/udetails" />
         <activity
             android:name=".ReportBp"
             android:label="@string/bpreport" />
@@ -74,6 +75,10 @@
             android:name=".GetDetailsOne"
             android:label="@string/udetails"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>
