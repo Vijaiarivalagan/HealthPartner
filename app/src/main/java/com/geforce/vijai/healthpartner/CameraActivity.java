@@ -226,6 +226,8 @@ public class CameraActivity extends AppCompatActivity {
             File myDir = new File(root + "/HealthPartner/Photos");
             myDir.mkdirs();
             final File file = new File(myDir, "savedpic.jpg");
+
+
             ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
                 @Override
                 public void onImageAvailable(ImageReader reader) {

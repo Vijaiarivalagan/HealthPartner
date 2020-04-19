@@ -2,73 +2,55 @@ package com.geforce.vijai.healthpartner;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.geforce.vijai.healthpartner.ui.home.HomeFragment;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.ml.common.FirebaseMLException;
-import com.google.firebase.ml.common.modeldownload.FirebaseModelManager;
 import com.google.firebase.ml.custom.FirebaseCustomLocalModel;
 import com.google.firebase.ml.custom.FirebaseCustomRemoteModel;
-import com.google.firebase.ml.custom.FirebaseModelDataType;
-import com.google.firebase.ml.custom.FirebaseModelInputOutputOptions;
-import com.google.firebase.ml.custom.FirebaseModelInputs;
 import com.google.firebase.ml.custom.FirebaseModelInterpreter;
-import com.google.firebase.ml.custom.FirebaseModelInterpreterOptions;
-import com.google.firebase.ml.custom.FirebaseModelOutputs;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import javax.net.ssl.HttpsURLConnection;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.RequestBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import okhttp3.Response;
 
 
 public class AddFoodDetails extends AppCompatActivity {
@@ -77,7 +59,7 @@ public class AddFoodDetails extends AppCompatActivity {
     private TextView qtytextview;
     private Button addFoodToList;
     private ImageView foodimg;
-    private int qtyeditvalue,qtysetvalue, progressChangedValue = 100;;
+    private int  progressChangedValue = 100;;
     private float calPerGram;
     String path=Environment.getExternalStorageDirectory()
             +"/HealthPartner/Photos",sessionStringValue,email;
@@ -88,25 +70,14 @@ public class AddFoodDetails extends AppCompatActivity {
     Date date;
     SimpleDateFormat sdf=new SimpleDateFormat("dd-MM-yyyy");
     Bitmap bitmap;
-    FirebaseCustomRemoteModel remoteModel;
-    FirebaseCustomLocalModel localModel;
-    FirebaseModelInterpreter interpreter;
+    //FirebaseCustomRemoteModel remoteModel;
+    //FirebaseCustomLocalModel localModel;
+    //FirebaseModelInterpreter interpreter;
 
 
     //added for image upload
-    String ServerUploadPath ="http://health-partner-c4302.appspot.com/predict" ;
-    ProgressDialog progressDialog ;
-    ByteArrayOutputStream byteArrayOutputStream ;
-    byte[] byteArray ;
-    String ConvertImage ;
-    HttpURLConnection httpURLConnection ;
-    URL url;
-    OutputStream outputStream;
-    BufferedWriter bufferedWriter ;
-    int RC ;
-    BufferedReader bufferedReader ;
-    StringBuilder stringBuilder;
-    boolean check = true;
+    String ServerUploadPath ="https://health-partner-c4302.appspot.com/" ;
+    String ServerImageUploadPath="https://health-partner-c4302.appspot.com/predict" ;
 
 
     @Override
@@ -129,7 +100,7 @@ public class AddFoodDetails extends AppCompatActivity {
         //end ml part
 
         //send for prediction first
-        //getPrediction(path);
+
 
 
         foodName=(TextView)findViewById(R.id.foodnameid);
@@ -142,8 +113,12 @@ public class AddFoodDetails extends AppCompatActivity {
 
 
 
-        bitmap = BitmapFactory.decodeFile(path+"/"+"savedpic.jpg");
+        bitmap = BitmapFactory.decodeFile(path+"/"+"savedpic1.jpg");
+        //uploadBitmap(bitmap);
+        //checkgcp();
         foodimg.setImageBitmap(bitmap);
+        checkgcpwithimage();
+
 
         pref= getSharedPreferences("user", MODE_PRIVATE);
         email=pref.getString("email",null);
@@ -206,6 +181,80 @@ public class AddFoodDetails extends AppCompatActivity {
 
         });
     }
+
+
+    private void checkgcpwithimage() {
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.RGB_565;
+        // Read BitMap by file path
+        Bitmap bitmap = BitmapFactory.decodeFile(path+"/savedpic1.jpg", options);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+        RequestBody postBodyImage = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("image", "androidFlask.jpg", RequestBody.create(MediaType.parse("image/*jpg"), byteArray))
+                .build();
+        postRequest(ServerImageUploadPath, postBodyImage);
+    }
+
+    void postRequest(String postUrl, RequestBody postBody) {
+
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(postUrl)
+                .post(postBody)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // Cancel the post on failure.
+                call.cancel();
+
+                // In order to access the TextView inside the UI thread, the code is executed inside runOnUiThread()
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        foodName.setText("Failed to Connect to Server");
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response) throws IOException {
+                // In order to access the TextView inside the UI thread, the code is executed inside runOnUiThread()
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        try {
+                            JSONObject reader = new JSONObject(response.body().string());
+                            String foodname=reader.getString("image_class");
+                            foodName.setText(response.body().string()+" "+foodname);
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+
+
+
+
+
+
+
+
+
 //=========================================================================================================
     //model start
 /*

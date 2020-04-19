@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.webkit.WebView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -34,6 +35,7 @@ public class ExerciseFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+
         db = FirebaseFirestore.getInstance();
         pref= this.getActivity().getSharedPreferences("user", MODE_PRIVATE);
         gender=pref.getString("genderValue",null);

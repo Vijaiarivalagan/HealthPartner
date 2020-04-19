@@ -44,6 +44,7 @@ public class HomeFragment extends Fragment {
 
     private FirebaseFirestore db;
     private SharedPreferences pref;
+
     SharedPreferences.Editor editor;
     private RecyclerView verticleRecyclerView;
     private VerticleRecyclerViewAdapter adapter;
