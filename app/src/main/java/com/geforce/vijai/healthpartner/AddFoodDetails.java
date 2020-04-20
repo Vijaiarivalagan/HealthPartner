@@ -10,9 +10,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -39,6 +41,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,10 +62,11 @@ public class AddFoodDetails extends AppCompatActivity {
     private TextView qtytextview;
     private Button addFoodToList;
     private ImageView foodimg;
-    private int  progressChangedValue = 100;;
+    private int  progressChangedValue = 100;
+    private ProgressBar loadingbar;
     private float calPerGram;
     String path=Environment.getExternalStorageDirectory()
-            +"/HealthPartner/Photos",sessionStringValue,email;
+            +"/HealthPartner/Photos/savedpic.jpg",sessionStringValue,email;
     int session;
     private Spinner sessionspinner;
     FirebaseFirestore db;
@@ -109,11 +113,12 @@ public class AddFoodDetails extends AppCompatActivity {
         foodimg=(ImageView)findViewById(R.id.takenimgid);
         qtytextview=(TextView)findViewById(R.id.qtytextview);
         sessionspinner=(Spinner)findViewById(R.id.sessionspinner);
+        loadingbar=(ProgressBar)findViewById(R.id.loadingprogress);
         db = FirebaseFirestore.getInstance();
 
 
 
-        bitmap = BitmapFactory.decodeFile(path+"/"+"savedpic1.jpg");
+        bitmap = BitmapFactory.decodeFile(path);
         //uploadBitmap(bitmap);
         //checkgcp();
         foodimg.setImageBitmap(bitmap);
@@ -173,8 +178,8 @@ public class AddFoodDetails extends AppCompatActivity {
 
 
                 File file = new File(path);
-                File myFile = new File(file,"savedpic.jpg");
-                myFile.delete();
+                //File myFile = new File(file,"savedpic.jpg");
+                file.delete();
 
             }
 
@@ -184,12 +189,14 @@ public class AddFoodDetails extends AppCompatActivity {
 
 
     private void checkgcpwithimage() {
-
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        loadingbar.setVisibility(View.VISIBLE);
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.RGB_565;
         // Read BitMap by file path
-        Bitmap bitmap = BitmapFactory.decodeFile(path+"/savedpic1.jpg", options);
+        Bitmap bitmap = BitmapFactory.decodeFile(path, options);
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
         byte[] byteArray = stream.toByteArray();
         RequestBody postBodyImage = new MultipartBody.Builder()
@@ -201,7 +208,13 @@ public class AddFoodDetails extends AppCompatActivity {
 
     void postRequest(String postUrl, RequestBody postBody) {
 
-        OkHttpClient client = new OkHttpClient();
+        //OkHttpClient client = new OkHttpClient();
+         OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .build();
+
 
         Request request = new Request.Builder()
                 .url(postUrl)
@@ -218,6 +231,8 @@ public class AddFoodDetails extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        loadingbar.setVisibility(View.GONE);
+                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                         foodName.setText("Failed to Connect to Server");
                     }
                 });
@@ -229,7 +244,8 @@ public class AddFoodDetails extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-
+                        loadingbar.setVisibility(View.GONE);
+                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                         try {
                             JSONObject reader = new JSONObject(response.body().string());
                             String foodname=reader.getString("image_class");
