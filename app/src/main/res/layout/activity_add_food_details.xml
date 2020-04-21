@@ -8,101 +8,292 @@
 
     tools:context=".AddFoodDetails">
 
-    <ImageView
-        android:id="@+id/takenimgid"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginTop="4dp"
-        android:layout_weight="1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/foodnameid"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_weight="1"
-        android:gravity="center|start"
-        android:hint="Food Name"
-        android:text="Food Name loading"
-        android:textColor="#0A0A0A"
-        android:textSize="25dp"
-        app:layout_constraintEnd_toEndOf="@+id/takenimgid"
-        app:layout_constraintHorizontal_bias="0.086"
-        app:layout_constraintStart_toStartOf="@+id/takenimgid"
-        app:layout_constraintTop_toBottomOf="@+id/takenimgid" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="73dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sessionspinner">
-
-        <SeekBar
-            android:id="@+id/qty"
-            android:layout_width="222dp"
-            android:layout_height="73dp"
-            android:layout_marginBottom="232dp"
-            android:layout_weight="1"
-            android:max="500"
-            android:progress="100"
-            android:progressDrawable="@drawable/seekbargradient"
-            android:thumb="@drawable/fsize"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/foodnameid"
-            app:layout_constraintVertical_bias="0.068" />
-
-        <TextView
-            android:id="@+id/qtytextview"
-            android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="100"
-            android:textSize="20dp"
-            app:layout_constraintBottom_toBottomOf="@+id/qty"
-            app:layout_constraintStart_toEndOf="@+id/qty"
-            app:layout_constraintTop_toTopOf="@+id/qty"
-            app:layout_constraintVertical_bias="0.437" />
-    </LinearLayout>
+            android:orientation="vertical"
+            android:layout_margin="2dp"
+            android:layout_marginEnd="3dp">
+            <ImageView
+                android:id="@+id/takenimgid"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginTop="4dp"
+                android:layout_weight="1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/addfoodtolistid"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginBottom="1dp"
-        android:background="@color/colorPrimary"
-        android:text="ADD FOOD"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+            <TextView
+                android:id="@+id/fooderrText"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:layout_weight="1"
+                android:text="Error !! Please goback and take a photo"
+                android:textColor="#F5E70909"
+                android:textSize="18sp"
+                android:visibility="gone" />
 
-    <Spinner
-        android:id="@+id/sessionspinner"
-        android:layout_width="181dp"
-        android:layout_height="64dp"
-        android:layout_marginTop="4dp"
-        android:entries="@array/session"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.069"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/foodnameid" />
+            <LinearLayout
+                android:id="@+id/goneLinearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="visible"
+                android:layout_marginStart="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginEnd="2dp"
+                    android:layout_marginTop="15dp"
+                    >
+                    <TextView
+                        android:id="@+id/foodnameid"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_weight="1"
+                        android:gravity="center|start"
+                        android:text="Food Name loading"
+                        android:textColor="#0A0A0A"
+                        android:textSize="25dp" />
+
+                    <Spinner
+                        android:id="@+id/sessionspinner"
+                        android:layout_width="181dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:entries="@array/session" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="15dp">
+
+                    <SeekBar
+                        android:id="@+id/qty"
+                        android:layout_width="222dp"
+                        android:layout_height="50dp"
+                        android:layout_marginBottom="232dp"
+                        android:layout_weight="1"
+                        android:max="500"
+                        android:progress="100"
+                        android:progressDrawable="@drawable/seekbargradient"
+                        android:thumb="@drawable/fsize"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/foodnameid"
+                        app:layout_constraintVertical_bias="0.068" />
+
+                    <TextView
+                        android:id="@+id/qtytextview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        android:gravity="center"
+                        android:text="100"
+                        android:textSize="20dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/qty"
+                        app:layout_constraintStart_toEndOf="@+id/qty"
+                        app:layout_constraintTop_toTopOf="@+id/qty"
+                        app:layout_constraintVertical_bias="0.437" />
+                </LinearLayout>
+
+                <TableLayout
+                    android:id="@+id/table"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:stretchColumns="0"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="50dp"
+                    android:layout_marginStart="5dp"
+
+                    tools:layout_editor_absoluteX="0dp"
+                    >
+
+                    <TableRow
+                        android:id="@+id/row1"
+                        android:layout_width="336dp"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/calorie"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Calorie"
+                            android:textColor="#000" />
+
+                        <TextView
+                            android:id="@+id/calorie_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="18sp" />
+                    </TableRow>
+
+                    <TableRow
+                        android:id="@+id/row2"
+                        android:layout_width="336dp"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/protein"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Protein"
+                            android:textColor="#000" />
+
+                        <TextView
+                            android:id="@+id/protein_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="18sp" />
+                    </TableRow>
+
+                    <TableRow
+                        android:id="@+id/row3"
+                        android:layout_width="336dp"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/carbohydrate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Carbohydrate"
+                            android:textColor="#000" />
+
+                        <TextView
+                            android:id="@+id/carbohydrate_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="18sp" />
+                    </TableRow>
+
+                    <TableRow
+                        android:id="@+id/row4"
+                        android:layout_width="336dp"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/fiber"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Fiber"
+                            android:textColor="#000" />
+
+                        <TextView
+                            android:id="@+id/fiber_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="18sp" />
+                    </TableRow>
+
+                    <TableRow
+                        android:id="@+id/row5"
+                        android:layout_width="336dp"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/fat"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Fat"
+                            android:textColor="#000" />
+
+                        <TextView
+                            android:id="@+id/fat_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="18sp" />
+                    </TableRow>
+
+                    <TableRow
+                        android:id="@+id/row6"
+                        android:layout_width="336dp"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/cholesterol"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Cholesterol"
+                            android:textColor="#000" />
+
+                        <TextView
+                            android:id="@+id/cholesterol_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="18sp" />
+                    </TableRow>
+
+                    <TableRow
+                        android:id="@+id/row7"
+                        android:layout_width="336dp"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/TotalCalorie"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Total Calorie"
+                            android:textColor="#000"
+                            android:textSize="20sp" />
+
+                        <TextView
+                            android:id="@+id/totalCalorieValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="20sp" />
+                    </TableRow>
+
+
+                </TableLayout>
+
+                <Button
+                    android:id="@+id/addfoodtolistid"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="30dp"
+                    android:layout_marginTop="15dp"
+                    android:background="@color/colorPrimary"
+                    android:text="ADD FOOD"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
 
     <ProgressBar
         android:id="@+id/loadingprogress"
         style="?android:attr/progressBarStyle"
-        android:layout_width="19dp"
-        android:layout_height="13dp"
+        android:layout_width="69dp"
+        android:layout_height="72dp"
         android:progressDrawable="@color/colorPrimary"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.474"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.159" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

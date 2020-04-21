@@ -80,6 +80,19 @@
     <string name="dbErrdigit4">Diabetes values should less than 4 digits</string>
     <string name="HeiWeierrdigit4"><![CDATA[height & weight should less than 4 digits]]></string>
     <string name="bpExcdigit4">Enter valid numbers</string>
+    <string name="cancelbtn">Cancel</string>
+    <string name="updatebtn">Update</string>
+    <string name="error_please_goback_and_take_a_photo">Error !! Please goback and take a photo</string>
+    <string name="food_name_loading">Food Name loading...</string>
+    <string name="_100">100</string>
+    <string name="calorie">Calorie</string>
+    <string name="_0">0</string>
+    <string name="protein">Protein</string>
+    <string name="carbohydrate">Carbohydrate</string>
+    <string name="fiber">Fiber</string>
+    <string name="fat">Fat</string>
+    <string name="cholesterol">Cholesterol</string>
+    <string name="total_calorie">Total Calorie</string>
 
     <string-array name="exerarray">
         <item>@string/sedentary</item>

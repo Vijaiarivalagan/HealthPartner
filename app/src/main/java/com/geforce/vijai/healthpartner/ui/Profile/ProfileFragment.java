@@ -159,7 +159,7 @@ public class ProfileFragment extends Fragment {
         else
             ngender.setSelection(1);
         String oldExer=pref.getString("exercise",null);
-        nexer.setSelection(exerList.indexOf("exercise"));
+        nexer.setSelection(exerList.indexOf(oldExer));
 
         nname.setText(pref.getString("name",null));
         nemail.setText(newEmail);

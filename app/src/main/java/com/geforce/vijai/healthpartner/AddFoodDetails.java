@@ -14,16 +14,21 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.ml.custom.FirebaseCustomLocalModel;
 import com.google.firebase.ml.custom.FirebaseCustomRemoteModel;
@@ -40,6 +45,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -57,26 +63,28 @@ import okhttp3.Response;
 
 
 public class AddFoodDetails extends AppCompatActivity {
-    private TextView foodName;
+
+    private TextView foodName,qtytextview,errText;
     private SeekBar qty;
-    private TextView qtytextview;
+    private Spinner sessionspinner;
     private Button addFoodToList;
     private ImageView foodimg;
-    private int  progressChangedValue = 100;
+    private int  session,progressChangedValue = 100;
     private ProgressBar loadingbar;
-    private float calPerGram;
+    private TableLayout tableLayout;
+    private  TextView tbcalorie,tbfat,tbfiber,tbprotein,tbcarbohydrate,tbcholestoral,tbtotal;
+    private LinearLayout goneLinear;
+    private float calorieMultiFactor,carboMultiFactor,proteinMultiFactor,fatMultiFactor,fiberMultiFactor,cholestorelMultiFactor;
+    private float fcalorieValue,ffatValue,ffiberValue,fproteinValue,fcarbohydratesValue,fcholestoralValue,ftotalValue;
     String path=Environment.getExternalStorageDirectory()
             +"/HealthPartner/Photos/savedpic.jpg",sessionStringValue,email;
-    int session;
-    private Spinner sessionspinner;
+    private String grams=" g";
     FirebaseFirestore db;
     SharedPreferences pref;
     Date date;
     SimpleDateFormat sdf=new SimpleDateFormat("dd-MM-yyyy");
     Bitmap bitmap;
-    //FirebaseCustomRemoteModel remoteModel;
-    //FirebaseCustomLocalModel localModel;
-    //FirebaseModelInterpreter interpreter;
+
 
 
     //added for image upload
@@ -89,21 +97,8 @@ public class AddFoodDetails extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_food_details);
 
-        //ml part
-        /*remoteModel = new FirebaseCustomRemoteModel.Builder("food_classifier").build();
-        localModel= new FirebaseCustomLocalModel.Builder()
-                .setAssetFilePath("food_classifier.tflite")
-                .build();
-
-        try {
-            runInference();
-        } catch (FirebaseMLException e) {
-            System.out.println("error in runintference"+e.toString());
-            e.printStackTrace();
-        }*/
-        //end ml part
-
-        //send for prediction first
+        db = FirebaseFirestore.getInstance();
+        bitmap = BitmapFactory.decodeFile(path);
 
 
 
@@ -114,11 +109,16 @@ public class AddFoodDetails extends AppCompatActivity {
         qtytextview=(TextView)findViewById(R.id.qtytextview);
         sessionspinner=(Spinner)findViewById(R.id.sessionspinner);
         loadingbar=(ProgressBar)findViewById(R.id.loadingprogress);
-        db = FirebaseFirestore.getInstance();
-
-
-
-        bitmap = BitmapFactory.decodeFile(path);
+        tableLayout=(TableLayout)findViewById(R.id.table);
+        tbcalorie=(TextView)findViewById(R.id.calorie_value);
+        tbprotein=(TextView)findViewById(R.id.protein_value);
+        tbfat=(TextView)findViewById(R.id.fat_value);
+        tbfiber=(TextView)findViewById(R.id.fiber_value);
+        tbcarbohydrate=(TextView)findViewById(R.id.carbohydrate_value);
+        tbcholestoral=(TextView)findViewById(R.id.cholesterol_value);
+        tbtotal=(TextView)findViewById(R.id.totalCalorieValue);
+        errText=(TextView)findViewById(R.id.fooderrText);
+        goneLinear=(LinearLayout)findViewById(R.id.goneLinearLayout);
         //uploadBitmap(bitmap);
         //checkgcp();
         foodimg.setImageBitmap(bitmap);
@@ -135,21 +135,41 @@ public class AddFoodDetails extends AppCompatActivity {
         qty.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
 
-                                           public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                                               progressChangedValue = progress;
-                                               qtytextview.setText(String.valueOf(progress)+"grams.");
-                                               //qtynumber.setText(progressChangedValue);
-                                           }
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                progressChangedValue = progress;
+                qtytextview.setText(String.valueOf(progress)+"grams.");
 
-                                           public void onStartTrackingTouch(SeekBar seekBar) {
-                                               // TODO Auto-generated method stub
-                                           }
+                fcalorieValue=calorieMultiFactor*progress;
+                ffatValue=fatMultiFactor*progress;
+                ffiberValue=fiberMultiFactor*progress;
+                fproteinValue=proteinMultiFactor*progress;
+                fcarbohydratesValue=carboMultiFactor*progress;
+                fcholestoralValue=cholestorelMultiFactor*progress;
 
-                                           public void onStopTrackingTouch(SeekBar seekBar) {
-                                               //qtysetvalue=progressChangedValue;
-                                               //qtynumber.setText(progressChangedValue);
-                                               //Toast.makeText(AddFoodDetails.this,""+progressChangedValue,Toast.LENGTH_SHORT).show();
-                                           }
+
+                tbcalorie.setText(String.format("%.2f",fcalorieValue)+grams);
+                tbfat.setText(String.format("%.2f",ffatValue)+grams);
+                tbfiber.setText(String.format("%.2f",ffiberValue)+grams);
+                tbcarbohydrate.setText(String.format("%.2f",fcarbohydratesValue)+grams);
+                tbprotein.setText(String.format("%.2f",fproteinValue)+grams);
+                tbcholestoral.setText(String.format("%.2f",fcholestoralValue)+grams);
+                tbtotal.setText(String.format("%.2f",fcalorieValue)+grams);
+
+
+
+
+                //qtynumber.setText(progressChangedValue);
+            }
+
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+            }
+
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                //qtysetvalue=progressChangedValue;
+                //qtynumber.setText(progressChangedValue);
+                //Toast.makeText(AddFoodDetails.this,""+progressChangedValue,Toast.LENGTH_SHORT).show();
+            }
         });
 
         sessionspinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -169,13 +189,15 @@ public class AddFoodDetails extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                loadingbar.setVisibility(View.VISIBLE);
+
                 String foodnametosend=foodName.getText().toString();
-                int calorievalue=progressChangedValue;
                 String sessiontosend=sessionStringValue;
 
                 //update to db
-                uploadfoodtodb(foodnametosend,calorievalue,sessiontosend);
-
+                uploadfoodtodb(foodnametosend,(int)fcalorieValue,sessiontosend);
 
                 File file = new File(path);
                 //File myFile = new File(file,"savedpic.jpg");
@@ -188,10 +210,13 @@ public class AddFoodDetails extends AppCompatActivity {
     }
 
 
+
+    //send image for classification---- start
     private void checkgcpwithimage() {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         loadingbar.setVisibility(View.VISIBLE);
+
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.RGB_565;
@@ -209,7 +234,7 @@ public class AddFoodDetails extends AppCompatActivity {
     void postRequest(String postUrl, RequestBody postBody) {
 
         //OkHttpClient client = new OkHttpClient();
-         OkHttpClient client = new OkHttpClient.Builder()
+        OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
@@ -233,7 +258,7 @@ public class AddFoodDetails extends AppCompatActivity {
                     public void run() {
                         loadingbar.setVisibility(View.GONE);
                         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                        foodName.setText("Failed to Connect to Server");
+                        errText.setVisibility(View.VISIBLE);
                     }
                 });
             }
@@ -245,12 +270,14 @@ public class AddFoodDetails extends AppCompatActivity {
                     @Override
                     public void run() {
                         loadingbar.setVisibility(View.GONE);
+                        goneLinear.setVisibility(View.VISIBLE);
                         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
                         try {
                             JSONObject reader = new JSONObject(response.body().string());
                             String foodname=reader.getString("image_class");
-                            foodName.setText(response.body().string()+" "+foodname);
-
+                            foodName.setText(" "+foodname);
+                            getCalorieFromDb(foodname.toLowerCase());
                         } catch (IOException e) {
                             e.printStackTrace();
                         } catch (JSONException e) {
@@ -262,6 +289,109 @@ public class AddFoodDetails extends AppCompatActivity {
         });
     }
 
+    //Get calories from db---- start
+    private void getCalorieFromDb(String foodname) {
+        db.collection("foodcalories").document(foodname)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document=task.getResult();
+                            if(document !=null){
+
+                                fcalorieValue=document.getDouble("calorie").floatValue();
+                                ffatValue=document.getDouble("fat").floatValue();
+                                ffiberValue=document.getDouble("fiber").floatValue();
+                                fcarbohydratesValue=document.getDouble("carbohydrates").floatValue();
+                                fproteinValue=document.getDouble("protein").floatValue();
+                                fcholestoralValue=document.getDouble("cholesterol").floatValue();
+
+                                calorieMultiFactor=fcalorieValue/100;
+                                fatMultiFactor=ffatValue/100;
+                                fiberMultiFactor=ffiberValue/100;
+                                carboMultiFactor=fcarbohydratesValue/100;
+                                proteinMultiFactor=fproteinValue/100;
+                                cholestorelMultiFactor=fcholestoralValue/100;
+
+                                System.out.println("multifactors"+carboMultiFactor+" "+fatMultiFactor+" "+fiberMultiFactor+" "+carboMultiFactor+" "+cholestorelMultiFactor+" "+proteinMultiFactor);
+
+                                tbcalorie.setText(String.format("%.2f",fcalorieValue)+grams);
+                                tbfat.setText(String.format("%.2f",ffatValue)+grams);
+                                tbfiber.setText(String.format("%.2f",ffiberValue)+grams);
+                                tbcarbohydrate.setText(String.format("%.2f",fcarbohydratesValue)+grams);
+                                tbprotein.setText(String.format("%.2f",fproteinValue)+grams);
+                                tbcholestoral.setText(String.format("%.2f",fcholestoralValue)+grams);
+                                tbtotal.setText(String.format("%.2f",fcalorieValue)+grams);
+
+
+                            }
+
+                        } else {
+                            Log.d("error", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+
+    }
+
+
+
+
+
+    //upload details to firebase
+    private void uploadfoodtodb(String foodnametosend, int calorievalue, String sessiontosend) {
+        Map<String, Object> foodcalories = new HashMap<>();
+        foodcalories.put("calorie", calorievalue);
+        foodcalories.put("food",foodnametosend);
+        foodcalories.put("food_session", sessiontosend);
+
+        date= new Date();
+        String datestring=sdf.format(date);
+        String id=db.collection("calories").document(email).collection(datestring).document().getId();
+        db.collection("calories").document(email).collection(datestring).document(id).set(foodcalories)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        loadingbar.setVisibility(View.GONE);
+                        Toast.makeText(getApplicationContext(), "Food Added",
+                                Toast.LENGTH_SHORT).show();
+
+                        startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                        finish();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        loadingbar.setVisibility(View.GONE);
+                        Toast.makeText(getApplicationContext(), "ERROR" + e.toString(),
+                                Toast.LENGTH_SHORT).show();
+                        Log.d("TAG", e.toString());
+                    }
+                });
+
+    }
+
+    //get breakfast,lunch,dinner by time of the day
+    private int getsession() {
+        Calendar c = Calendar.getInstance();
+        int timeOfDay = c.get(Calendar.HOUR_OF_DAY);
+
+        if(timeOfDay >= 0 && timeOfDay < 12){
+            //return "BreakFast";
+            return 0;
+        }else if(timeOfDay >= 12 && timeOfDay < 16){
+            //return "Lunch";
+            return 1;
+        }else if(timeOfDay >= 17 && timeOfDay < 24){
+            //return "Dinner";
+            return 2;
+        }
+        return 0;
+    }
+
+}
 
 
 
@@ -272,8 +402,31 @@ public class AddFoodDetails extends AppCompatActivity {
 
 
 //=========================================================================================================
-    //model start
+//model start
+
+//FirebaseCustomRemoteModel remoteModel;
+//FirebaseCustomLocalModel localModel;
+//FirebaseModelInterpreter interpreter;
+
+//ml part
+        /*remoteModel = new FirebaseCustomRemoteModel.Builder("food_classifier").build();
+        localModel= new FirebaseCustomLocalModel.Builder()
+                .setAssetFilePath("food_classifier.tflite")
+                .build();
+
+        try {
+            runInference();
+        } catch (FirebaseMLException e) {
+            System.out.println("error in runintference"+e.toString());
+            e.printStackTrace();
+        }*/
+//end ml part
+
+//send for prediction first
+
 /*
+
+
 // get the available model interpreter
 private FirebaseModelInterpreter getModelInterpreter(
         final FirebaseCustomRemoteModel remoteModel,
@@ -386,56 +539,6 @@ private void runInference() throws FirebaseMLException {
 
         return inputOutputOptions;
     }*/
-    //========================================================================================================================
+//========================================================================================================================
 
-
-    private void uploadfoodtodb(String foodnametosend, int calorievalue, String sessiontosend) {
-        Map<String, Object> foodcalories = new HashMap<>();
-        foodcalories.put("calorie", calorievalue);
-        foodcalories.put("food",foodnametosend);
-        foodcalories.put("food_session", sessiontosend);
-
-        date= new Date();
-        String datestring=sdf.format(date);
-        String id=db.collection("calories").document(email).collection(datestring).document().getId();
-        db.collection("calories").document(email).collection(datestring).document(id).set(foodcalories)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(getApplicationContext(), "Food Added",
-                                Toast.LENGTH_SHORT).show();
-
-                        startActivity(new Intent(getApplicationContext(), HomeActivity.class));
-                        finish();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getApplicationContext(), "ERROR" + e.toString(),
-                                Toast.LENGTH_SHORT).show();
-                        Log.d("TAG", e.toString());
-                    }
-                });
-
-    }
-
-    private int getsession() {
-        Calendar c = Calendar.getInstance();
-        int timeOfDay = c.get(Calendar.HOUR_OF_DAY);
-
-        if(timeOfDay >= 0 && timeOfDay < 12){
-            //return "BreakFast";
-            return 0;
-        }else if(timeOfDay >= 12 && timeOfDay < 16){
-            //return "Lunch";
-            return 1;
-        }else if(timeOfDay >= 17 && timeOfDay < 24){
-            //return "Dinner";
-            return 2;
-        }
-        return 0;
-    }
-
-   }
 
