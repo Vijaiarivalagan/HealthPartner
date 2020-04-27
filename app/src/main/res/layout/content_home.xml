@@ -70,6 +70,11 @@
             android:layout_marginRight="1dp"
             app:layout_constraintVertical_bias="1.0" />
 
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/fire" />
+
         <TextView
             android:id="@+id/tvcal"
             android:layout_width="wrap_content"

@@ -82,7 +82,7 @@
     <string name="bpExcdigit4">Enter valid numbers</string>
     <string name="cancelbtn">Cancel</string>
     <string name="updatebtn">Update</string>
-    <string name="error_please_goback_and_take_a_photo">Error !! Please goback and take a photo</string>
+
     <string name="food_name_loading">Food Name loading...</string>
     <string name="_100">100</string>
     <string name="calorie">Calorie</string>
@@ -93,7 +93,17 @@
     <string name="fat">Fat</string>
     <string name="cholesterol">Cholesterol</string>
     <string name="total_calorie">Total Calorie</string>
-
+    <string name="food_name">Food Name</string>
+    <string name="normal_bp">Normal BP</string>
+    <string name="low_bp">Low BP</string>
+    <string name="high_bp">High BP</string>
+    <string name="normal_db">Normal Diabetes</string>
+    <string name="low_db">Low Diabetes</string>
+    <string name="high_db">High Diabetes</string>
+    <string name="bphint">Normal Systol 110-130, Diastol 75-85</string>
+    <string name="dbhint">Normal bef. meals 70-130, aft. meals 100-180</string>
+    <string name="error_please_goback_and_take_a_photo">Error !! Please goback and take a photo</string>
+    <string name="or">(OR)</string>
     <string-array name="exerarray">
         <item>@string/sedentary</item>
         <item>@string/lightly</item>

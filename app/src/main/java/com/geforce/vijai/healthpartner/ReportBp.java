@@ -102,7 +102,7 @@ public class ReportBp extends AppCompatActivity {
             }
         };
 
-        LimitLine upper_limit = new LimitLine(systolnormal, "Normal Limit");
+        LimitLine upper_limit = new LimitLine(systolnormal, "Limit");
         upper_limit.setLineWidth(2f);
         upper_limit.enableDashedLine(20f, 10f, 0f);
         upper_limit.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
@@ -145,7 +145,7 @@ public class ReportBp extends AppCompatActivity {
         systolLineData=new LineData(systolILineDataSet);
         systolLineChart.clear();
         systolLineChart.setData(systolLineData);
-        systolLineChart.animateX(500);
+        systolLineChart.animateX(400);
         systolLineChart.getDescription().setText("Systol Bp ");
         systolLineChart.setNoDataText("No data or Loading");
         systolLineChart.invalidate();
@@ -160,7 +160,7 @@ public class ReportBp extends AppCompatActivity {
             }
         };
 
-        LimitLine upper_limit = new LimitLine(diastolnormal, "Normal Limit");
+        LimitLine upper_limit = new LimitLine(diastolnormal, "Limit");
         upper_limit.setLineWidth(2f);
         upper_limit.enableDashedLine(20f, 10f, 0f);
         upper_limit.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);

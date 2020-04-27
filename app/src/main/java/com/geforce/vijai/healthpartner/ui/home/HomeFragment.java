@@ -54,7 +54,7 @@ public class HomeFragment extends Fragment {
     private List<String> exerList= Arrays.asList("sedentary","lightly","moderately","veryactive","superactive");
     private List<Float> cpdList=Arrays.asList(1.2f,1.375f,1.55f,1.725f,1.9f);
 
-    private String email;
+    private String email,pressureRange,diabetesRange;
     private TextView totaltv;
     private ImageButton addexer,updateBp,updateDiabetes,updateHeight,updateweight;
     private ProgressBar Pb;
@@ -76,7 +76,7 @@ public class HomeFragment extends Fragment {
         db=FirebaseFirestore.getInstance();
         pref= this.getActivity().getSharedPreferences("user", MODE_PRIVATE);
         email=pref.getString("email",null);
-        calorie=(int)pref.getFloat("calorie",0);
+        calorie=pref.getInt("calorie",0);
 
         Pb=(ProgressBar)root.findViewById(R.id.breakfastpb);
         addexer=(ImageButton)root.findViewById(R.id.exerId);
@@ -85,7 +85,7 @@ public class HomeFragment extends Fragment {
         updateHeight=(ImageButton)root.findViewById(R.id.updateheight);
         totaltv=(TextView)root.findViewById(R.id.totaltvid);
 
-        totaltv.setText(c+"/"+calorie);
+        totaltv.setText(c+" / "+calorie);
 
         Pb.setMax(calorie);
 
@@ -169,7 +169,7 @@ public class HomeFragment extends Fragment {
             c += hh.getCalorie();
         }
         Pb.setProgress(c);
-        totaltv.setText(c+"/"+calorie);
+        totaltv.setText(c+" / "+calorie);
         editor = pref.edit();
         editor.putInt("dailyCalorie",c);
         editor.commit();
@@ -210,6 +210,10 @@ public class HomeFragment extends Fragment {
         final Button cancel=(Button)promptsView.findViewById(R.id.twoEtDiaCancel);
         final Button ok=(Button)promptsView.findViewById(R.id.twoEtDiaOk);
         final TextView errText=(TextView)promptsView.findViewById(R.id.twoEtDiaerrText);
+        final TextView rangeText=(TextView)promptsView.findViewById(R.id.range_text);
+        final TextView rangeHint=(TextView)promptsView.findViewById(R.id.range_hint);
+
+        rangeHint.setText(getResources().getString(R.string.bphint));
         systolET.setHint("Systol Bp.");
         diastolET.setHint("Diastol Bp.");
 
@@ -225,21 +229,37 @@ public class HomeFragment extends Fragment {
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                float v1=0.0f,v2=0.0f;
+                int v1=0,v2=0;
                 try {
-                    v1=Float.valueOf(systolET.getText().toString());
-                    v2=Float.valueOf(diastolET.getText().toString());
+                    v1=Integer.valueOf(systolET.getText().toString());
+                    v2=Integer.valueOf(diastolET.getText().toString());
                 }catch (NumberFormatException e){
                     errText.setText(getString(R.string.bpExcdigit4));
                     return;
                 }
 
                 if(systolET.getText().length()<=3 && diastolET.getText().length()<=3){
-                    sendToDb(v1,v2,BP_KEY);
+
+                        pressureRange=getPressureRange(v1,v2);
+                        if(pressureRange.equalsIgnoreCase("normal")){
+                            rangeText.setText(getResources().getString(R.string.normal_bp));
+                            rangeText.setTextColor(getResources().getColor(R.color.rangenormal));
+                        }
+                        else if(pressureRange.equalsIgnoreCase("low") ){
+                            rangeText.setText(getResources().getString(R.string.low_bp));
+                            rangeText.setTextColor(getResources().getColor(R.color.rangelow_high));
+                        }
+                        else if(pressureRange.equalsIgnoreCase("High") ){
+                            rangeText.setText(getResources().getString(R.string.high_bp));
+                            rangeText.setTextColor(getResources().getColor(R.color.rangelow_high));
+                        }
+
+                        sendToDb(v1,v2,BP_KEY);
                         editor = pref.edit();
                         editor.putFloat("systolValue", v1);
                         editor.putFloat("diastolValue", v2);
-                        editor.commit();
+                        editor.putString("pressureRange",pressureRange);
+                        editor.apply();
                         updateUserProfile("systol",v1, "diastol", v2);
                         alertDialog.cancel();
 
@@ -271,6 +291,10 @@ public class HomeFragment extends Fragment {
         final Button cancel=(Button)promptsView.findViewById(R.id.twoEtDiaCancel);
         final Button ok=(Button)promptsView.findViewById(R.id.twoEtDiaOk);
         final TextView errText=(TextView)promptsView.findViewById(R.id.twoEtDiaerrText);
+        final TextView rangeText=(TextView)promptsView.findViewById(R.id.range_text);
+        final TextView rangeHint=(TextView)promptsView.findViewById(R.id.range_hint);
+
+        rangeHint.setText(getResources().getString(R.string.dbhint));
 
         beforeMealEt.setHint("Before taking meals");
         afterMealET.setHint("After taking meals");
@@ -287,21 +311,38 @@ public class HomeFragment extends Fragment {
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                float v1=0.0f,v2=0.0f;
+                int v1=0,v2=0;
                 try {
-                    v1 = Float.parseFloat(beforeMealEt.getText().toString());
-                    v2 = Float.parseFloat(afterMealET.getText().toString());
+                    v1 = Integer.parseInt(beforeMealEt.getText().toString());
+                    v2 = Integer.parseInt(afterMealET.getText().toString());
                 }catch (NumberFormatException e){
                     errText.setText(getString(R.string.bpExcdigit4));
                     return;
                 }
 
                 if(beforeMealEt.getText().length()<=3 && afterMealET.getText().length()<=3){
+
+                    diabetesRange=getDiabetesRange(v1,v2);
+                    if(diabetesRange.equalsIgnoreCase("normal")){
+                        rangeText.setText(getResources().getString(R.string.normal_db));
+                        rangeText.setTextColor(getResources().getColor(R.color.rangenormal));
+                    }
+                    else if(diabetesRange.equalsIgnoreCase("low") ){
+                        rangeText.setText(getResources().getString(R.string.low_db));
+                        rangeText.setTextColor(getResources().getColor(R.color.rangelow_high));
+                    }
+                    else if(diabetesRange.equalsIgnoreCase("High") ){
+                        rangeText.setText(getResources().getString(R.string.high_db));
+                        rangeText.setTextColor(getResources().getColor(R.color.rangelow_high));
+                    }
+
+
                     sendToDb(v1,v2,DIABETES_KEY);
                     editor = pref.edit();
                     editor.putFloat("befMealValue", v1);
                     editor.putFloat("aftMealValue", v2);
-                    editor.commit();
+                    editor.putString("diabetesRange",diabetesRange);
+                    editor.apply();
                     updateUserProfile("beforeMeal",v1, "afterMeal", v2);
                     alertDialog.cancel();
                 }
@@ -368,8 +409,8 @@ public class HomeFragment extends Fragment {
                     editor = pref.edit();
                     editor.putFloat("heightValue", v1);
                     editor.putFloat("weightValue", v2);
-                    editor.putFloat("calorie",caloriePerDay);
-                    editor.commit();
+                    editor.putInt("calorie",caloriePerDay);
+                    editor.apply();
 
                     alertDialog.cancel();
                 }
@@ -467,6 +508,43 @@ public class HomeFragment extends Fragment {
                     }
                 });
     }
+
+
+
+    //pressures get and show ranges
+    public String getPressureRange(int systolValue,int diastolValue) {
+        String range="";
+        if ((systolValue >= 60 && systolValue <= 109) && (diastolValue >= 40 && diastolValue <= 74)) {
+            // blood pressure Low level
+            range = "low";
+        }
+        else if ((systolValue >= 110 && systolValue <= 135) && (diastolValue >= 75 && diastolValue <= 85)) {
+            // blood pressure Normal level
+            range = "normal";
+        }  else if ((systolValue >= 136 && systolValue <= 210) && (diastolValue >= 86 && diastolValue <= 120)) {
+            // blood pressure High level
+            range = "high";
+        }
+        return range;
+    }
+
+    // diabetes get and show ranges
+    private String getDiabetesRange(int befMealValue, int aftMealValue) {
+        String range="";
+
+        if(befMealValue<=69 && aftMealValue <= 100){
+            range="low";
+        }
+        else if((befMealValue>=70 && befMealValue<=130) && (aftMealValue <=180))
+        {
+            range="normal";
+        }
+        else if(befMealValue>=131 && aftMealValue>=181){
+            range="high";
+        }
+        return range;
+    }
+
 
 
 }

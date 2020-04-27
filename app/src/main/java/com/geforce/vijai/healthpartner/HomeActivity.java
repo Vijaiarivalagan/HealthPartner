@@ -80,7 +80,7 @@ public class HomeActivity extends AppCompatActivity implements SensorEventListen
         TvSteps=(TextView)findViewById(R.id.tvstep);
         TvsGoal=(TextView)findViewById(R.id.tvgoal);
         TvCal=(TextView)findViewById(R.id.tvcal);
-        TvsGoal.setText("Goal: %d"+10000);
+        TvsGoal.setText("Goal: "+10000);
 
         email=pref.getString("email",null);
         //stepgoal=pref.getInt("stepGoal",0);
@@ -93,7 +93,8 @@ public class HomeActivity extends AppCompatActivity implements SensorEventListen
         simpleStepDetector.registerListener(HomeActivity.this);
 
         numSteps=pref.getInt("dailyStepcount",0);
-        TvSteps.setText(String.valueOf(numSteps));
+        TvSteps.setText("Today: "+numSteps);
+        TvCal.setText(String.format("%.2f",numSteps*0.04)+" cal");
 
 
         //save daily calorie and steps
@@ -132,10 +133,10 @@ public class HomeActivity extends AppCompatActivity implements SensorEventListen
         System.out.println("weight "+pref.getFloat("weightValue",0.0f));
         System.out.println("age "+pref.getInt("ageValue",0));
         System.out.println("gender "+pref.getString("genderValue",null));
-        System.out.println("systolValue "+pref.getFloat("systolValue",0.0f));
-        System.out.println("diastolValue "+pref.getFloat("diastolValue",0.0f));
-        System.out.println("befMealValue "+pref.getFloat("befMealValue",0.0f));
-        System.out.println("aftMealValue "+pref.getFloat("aftMealValue",0.0f));
+        System.out.println("systolValue "+pref.getInt("systolValue",0));
+        System.out.println("diastolValue "+pref.getInt("diastolValue",0));
+        System.out.println("befMealValue "+pref.getInt("befMealValue",0));
+        System.out.println("aftMealValue "+pref.getInt("aftMealValue",0));
         System.out.println("exer "+pref.getString("exercise",null));
         System.out.println("cal "+pref.getInt("dailyCalorie",0));
         System.out.println("cal "+pref.getInt("dailyStepcount",0));
@@ -161,7 +162,7 @@ public class HomeActivity extends AppCompatActivity implements SensorEventListen
 
 
 
-    // save daily calorie & steps to firestore
+    // save daily calorie & steps to firestore only at day diff is 1
     private void saveStepsAndCalorieToDb() {
 
         //save calories to calorie reports
@@ -224,7 +225,7 @@ public class HomeActivity extends AppCompatActivity implements SensorEventListen
     public void step(long timeNs) {
         numSteps++;
         TvSteps.setText(String.format("Today: %d", numSteps));
-        TvCal.setText(String.valueOf(numSteps*0.4));
+        TvCal.setText(String.format("%.2f",numSteps*0.04)+" cal");
     }
 
     @Override

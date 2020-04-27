@@ -31,7 +31,7 @@ import java.util.List;
 public class ReportDiabetes extends AppCompatActivity {
 
     private LineChart beforeMealLineChart,afterMealLineChart;
-    private int beforeMealNormal,afterMealNormal;
+    private int beforeMealNormal=130,afterMealNormal=180;
     LineDataSet beforeMealLineDataset=new LineDataSet(null,null);
     ArrayList<ILineDataSet> beforeMealILineDataSet=new ArrayList<>();
     LineData beforeMealLineData;
@@ -54,8 +54,7 @@ public class ReportDiabetes extends AppCompatActivity {
 
         pref= this.getSharedPreferences("user", MODE_PRIVATE);
         email=pref.getString("email",null);
-        beforeMealNormal=102;
-        afterMealNormal=151;
+
         db= FirebaseFirestore.getInstance();
         getDataFromFirebase();
 
@@ -100,7 +99,7 @@ public class ReportDiabetes extends AppCompatActivity {
             }
         };
 
-        LimitLine upper_limit = new LimitLine(beforeMealNormal, "Normal Limit");
+        LimitLine upper_limit = new LimitLine(beforeMealNormal, " Limit");
         upper_limit.setLineWidth(2f);
         upper_limit.enableDashedLine(20f, 10f, 0f);
         upper_limit.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
@@ -158,7 +157,7 @@ public class ReportDiabetes extends AppCompatActivity {
             }
         };
 
-        LimitLine upper_limit = new LimitLine(afterMealNormal, "Normal Limit");
+        LimitLine upper_limit = new LimitLine(afterMealNormal, "Limit");
         upper_limit.setLineWidth(2f);
         upper_limit.enableDashedLine(20f, 10f, 0f);
         upper_limit.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);

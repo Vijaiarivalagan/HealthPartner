@@ -32,8 +32,8 @@ public class GetDetailsTwo extends AppCompatActivity {
     private List<String> exerList= Arrays.asList("sedentary","lightly","moderately","veryactive","superactive");
     private List<Float> cpdList=Arrays.asList(1.2f,1.375f,1.55f,1.725f,1.9f);
 
-    private float heightValue,weightValue,systolValue,diastolValue,befMealValue,aftMealValue;
-    private int ageValue,caloriePerDay;
+    private float heightValue,weightValue;
+    private int ageValue,caloriePerDay,systolValue,diastolValue,befMealValue,aftMealValue;
     private String name,email,genderValue,exerciseValue;
     private RadioButton l1,l2,l3,l4,l5;
     private Button complete;
@@ -77,10 +77,10 @@ public class GetDetailsTwo extends AppCompatActivity {
         weightValue=pref.getFloat("weightValue",0.0f);
         ageValue=pref.getInt("ageValue",0);
         genderValue=pref.getString("genderValue",null);
-        systolValue=pref.getFloat("systolValue",0.0f);
-        diastolValue=pref.getFloat("diastolValue",0.0f);
-        befMealValue=pref.getFloat("befMealValue",0.0f);
-        aftMealValue=pref.getFloat("aftMealValue",0.0f);
+        systolValue=pref.getInt("systolValue",0);
+        diastolValue=pref.getInt("diastolValue",0);
+        befMealValue=pref.getInt("befMealValue",0);
+        aftMealValue=pref.getInt("aftMealValue",0);
 
 
 
@@ -103,13 +103,13 @@ public class GetDetailsTwo extends AppCompatActivity {
                 //Toast.makeText(getApplicationContext(), cpd.toString(), Toast.LENGTH_LONG).show(); // print calorie per day(cpd)
                 addNewUser(email,name,heightValue,weightValue,ageValue,genderValue,caloriePerDay,systolValue,diastolValue,befMealValue,aftMealValue,exerciseValue);
                 editor = pref.edit();
-                editor.putFloat("calorie",caloriePerDay);
+                editor.putInt("calorie",caloriePerDay);
                 editor.putInt("stepcount",1000);
                 editor.putInt("dailyCalorie",0);
                 editor.putInt("dailyStepcount",0);
                 editor.putString("exercise",exerciseValue);
                 editor.putString("beforedate",sdf.format(new Date()));
-                editor.commit();
+                editor.apply();
 
 
             }
@@ -173,7 +173,7 @@ public class GetDetailsTwo extends AppCompatActivity {
 
     private void saveToReport() {
         long d=new Date().getTime();
-        if(systolValue!=0.0f && diastolValue!=0.0f){
+        if(systolValue!=0 && diastolValue!=0){
 
             Map<String, Object> systolReport = new HashMap<>();
             systolReport.put("date", d);
@@ -188,7 +188,7 @@ public class GetDetailsTwo extends AppCompatActivity {
             addNewReport(email,systolReport,"reportbp");
             addNewReport(email,diastolReport,"reportbp");
         }
-        if(befMealValue!=0.0f && aftMealValue!=0.0f){
+        if(befMealValue!=0 && aftMealValue!=0){
             Map<String, Object> befMealReport = new HashMap<>();
             befMealReport.put("date", d);
             befMealReport.put("type","beforemeal");

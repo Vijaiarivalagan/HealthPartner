@@ -31,7 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="42dp"
                 android:layout_weight="1"
-                android:text="Error !! Please goback and take a photo"
+                android:text="@string/error_please_goback_and_take_a_photo"
                 android:textColor="#F5E70909"
                 android:textSize="18sp"
                 android:visibility="gone" />
@@ -41,7 +41,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:visibility="visible"
+                android:visibility="gone"
                 android:layout_marginStart="2dp">
 
                 <LinearLayout
@@ -49,26 +49,35 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_marginEnd="2dp"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="20dp"
                     >
                     <TextView
                         android:id="@+id/foodnameid"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
                         android:layout_weight="1"
                         android:gravity="center|start"
-                        android:text="Food Name loading"
+                        android:text="@string/food_name"
                         android:textColor="#0A0A0A"
                         android:textSize="25dp" />
 
                     <Spinner
                         android:id="@+id/sessionspinner"
                         android:layout_width="181dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
+                        android:layout_height="match_parent"
+
                         android:entries="@array/session" />
                 </LinearLayout>
+
+                <TextView
+                    android:id="@+id/foodinfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:textColor="#0A0A0A"
+                     />
+
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -85,22 +94,16 @@
                         android:progress="100"
                         android:progressDrawable="@drawable/seekbargradient"
                         android:thumb="@drawable/fsize"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/foodnameid"
-                        app:layout_constraintVertical_bias="0.068" />
+                         />
 
                     <TextView
                         android:id="@+id/qtytextview"
                         android:layout_width="wrap_content"
                         android:layout_height="50dp"
                         android:gravity="center"
-                        android:text="100"
-                        android:textSize="20dp"
-                        app:layout_constraintBottom_toBottomOf="@+id/qty"
-                        app:layout_constraintStart_toEndOf="@+id/qty"
-                        app:layout_constraintTop_toTopOf="@+id/qty"
-                        app:layout_constraintVertical_bias="0.437" />
+                        android:text="@string/_100"
+                        android:textSize="20sp"
+                        />
                 </LinearLayout>
 
                 <TableLayout
@@ -111,7 +114,7 @@
                     android:layout_marginTop="15dp"
                     android:layout_marginEnd="50dp"
                     android:layout_marginStart="5dp"
-
+                    android:paddingBottom="2dip"
                     tools:layout_editor_absoluteX="0dp"
                     >
 
@@ -266,17 +269,28 @@
 
                 </TableLayout>
 
+                <TextView
+                    android:id="@+id/excesscalorietext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    android:textColor="@color/rangelow_high"
+                    android:textSize="20sp"
+                    />
                 <Button
                     android:id="@+id/addfoodtolistid"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
-                    android:layout_marginBottom="30dp"
+                    android:layout_marginBottom="10dp"
                     android:layout_marginTop="15dp"
                     android:background="@color/colorPrimary"
                     android:text="ADD FOOD"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
+
+
 
             </LinearLayout>
 

@@ -4,6 +4,12 @@
     android:layout_height="match_parent"
     android:gravity="center">
 
+    <TextView
+        android:id="@+id/range_hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold" />
+
     <EditText
         android:id="@+id/twoEtDiaEt1"
         android:layout_width="match_parent"
@@ -23,6 +29,15 @@
         android:inputType="numberDecimal"
         android:layout_marginStart="2dp"
         android:textSize="15sp"/>
+
+    <TextView
+        android:id="@+id/range_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textSize="16sp"
+        android:visibility="gone" />
+
     <TextView
         android:id="@+id/twoEtDiaerrText"
         android:layout_height="wrap_content"

@@ -2,5 +2,8 @@
 <resources>
     <array name="preloaded_fonts" translatable="false">
         <item>@font/amiko</item>
+        <item>@font/amiko_bold</item>
+        <item>@font/bitter_bold</item>
+        <item>@font/monoton</item>
     </array>
 </resources>

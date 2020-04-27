@@ -138,21 +138,32 @@ public class LoginActivity extends AppCompatActivity {
                             DocumentSnapshot document=task.getResult();
                             if(document !=null){
 
-                                Toast.makeText(getApplicationContext(),inputEmail.getText().toString(),Toast.LENGTH_SHORT);
-                                Toast.makeText(getApplicationContext(),document.getString("gender")+" "+document.getDouble("calorie"),Toast.LENGTH_SHORT);
+                                Toast.makeText(getApplicationContext(),"Welcom back "+document.getString("name"),Toast.LENGTH_SHORT);
+                                //Toast.makeText(getApplicationContext(),document.getString("gender")+" "+document.getDouble("calorie"),Toast.LENGTH_SHORT);
+                                int systolValue,diastolValue,befMealValue,aftMealValue;
+                                String pressureRange,diabetesRange;
+                                systolValue=document.getLong("systol").intValue();
+                                diastolValue=document.getLong("diastol").intValue();
+                                befMealValue=document.getLong("beforeMeal").intValue();
+                                aftMealValue=document.getLong("afterMeal").intValue();
+                                pressureRange=getPressureRange(systolValue,diastolValue);
+                                diabetesRange=getDiabetesRange(befMealValue,aftMealValue);
                                 editor = pref.edit();
                                 editor.putString("email",inputEmail.getText().toString());
                                 editor.putString("name",document.getString("name"));
                                 editor.putString("genderValue",document.getString("gender"));
-                                editor.putFloat("calorie",document.getDouble("calorie").floatValue());
+                                editor.putInt("calorie",document.getLong("calorie").intValue());
                                 editor.putFloat("heightValue",document.getDouble("height").floatValue());
                                 editor.putFloat("weightValue",document.getDouble("weight").floatValue());
-                                editor.putInt("ageValue",document.getDouble("age").intValue());
-                                editor.putFloat("systolValue",document.getDouble("systol").floatValue());
-                                editor.putFloat("diastolValue",document.getDouble("diastol").floatValue());
-                                editor.putFloat("befMealValue",document.getDouble("beforeMeal").floatValue());
-                                editor.putFloat("aftMealValue",document.getDouble("afterMeal").floatValue());
+                                editor.putInt("ageValue",document.getLong("age").intValue());
+                                editor.putInt("systolValue",systolValue);
+                                editor.putInt("diastolValue",diastolValue);
+                                editor.putInt("befMealValue",befMealValue);
+                                editor.putInt("aftMealValue",aftMealValue);
                                 editor.putString("beforedate",sdf.format(new Date()));
+                                editor.putString("pressureRange",pressureRange);
+                                editor.putString("diabetesRange",diabetesRange);
+
                                 editor.commit();
                                 Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                                 startActivity(intent);
@@ -166,5 +177,41 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
     }
+
+
+    //pressures get and show ranges
+    public String getPressureRange(int systolValue,int diastolValue) {
+        String range="";
+        if ((systolValue >= 60 && systolValue <= 109) && (diastolValue >= 40 && diastolValue <= 74)) {
+            // blood pressure Low level
+            range = "low";
+        }
+        else if ((systolValue >= 110 && systolValue <= 135) && (diastolValue >= 75 && diastolValue <= 85)) {
+            // blood pressure Normal level
+            range = "normal";
+        }  else if ((systolValue >= 136 && systolValue <= 210) && (diastolValue >= 86 && diastolValue <= 120)) {
+            // blood pressure High level
+            range = "high";
+        }
+        return range;
+    }
+
+    // diabetes get and show ranges
+    private String getDiabetesRange(int befMealValue, int aftMealValue) {
+        String range="";
+
+        if(befMealValue<=69 && aftMealValue <= 100){
+            range="low";
+        }
+        else if((befMealValue>=70 && befMealValue<=130) && (aftMealValue <=180))
+        {
+            range="normal";
+        }
+        else if(befMealValue>=131 && aftMealValue>=181){
+            range="high";
+        }
+        return range;
+    }
+
 }
 

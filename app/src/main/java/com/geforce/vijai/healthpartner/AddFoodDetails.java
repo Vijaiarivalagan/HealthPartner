@@ -2,6 +2,8 @@ package com.geforce.vijai.healthpartner;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -9,10 +11,12 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -64,42 +68,46 @@ import okhttp3.Response;
 
 public class AddFoodDetails extends AppCompatActivity {
 
-    private TextView foodName,qtytextview,errText;
+    private TextView foodName,qtytextview,errText,calorieExcess,foodInfo;
     private SeekBar qty;
     private Spinner sessionspinner;
     private Button addFoodToList;
     private ImageView foodimg;
-    private int  session,progressChangedValue = 100;
+    private int  session,dailyCalorie,totalCalorie;
     private ProgressBar loadingbar;
     private TableLayout tableLayout;
     private  TextView tbcalorie,tbfat,tbfiber,tbprotein,tbcarbohydrate,tbcholestoral,tbtotal;
     private LinearLayout goneLinear;
+
     private float calorieMultiFactor,carboMultiFactor,proteinMultiFactor,fatMultiFactor,fiberMultiFactor,cholestorelMultiFactor;
+    private float cyclingMultiFactor=6f,runningMultiFactor=8.7f,walkingMultiFactor=2.66f,cleaningMultiFactor=3.5f;
     private float fcalorieValue,ffatValue,ffiberValue,fproteinValue,fcarbohydratesValue,fcholestoralValue,ftotalValue;
+    private int fprogressValue;
+    private String fservingValue;
+
     String path=Environment.getExternalStorageDirectory()
             +"/HealthPartner/Photos/savedpic.jpg",sessionStringValue,email;
-    private String grams=" g";
+    private String grams=" g",pressureRange,diabetesRange;
     FirebaseFirestore db;
     SharedPreferences pref;
     Date date;
     SimpleDateFormat sdf=new SimpleDateFormat("dd-MM-yyyy");
     Bitmap bitmap;
 
-
-
-    //added for image upload
-    String ServerUploadPath ="https://health-partner-c4302.appspot.com/" ;
     String ServerImageUploadPath="https://health-partner-c4302.appspot.com/predict" ;
-
+    List<String> highBpFood,lowBpFood,lowSugarFood,highSugarFood;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_food_details);
 
+        pref= getSharedPreferences("user", MODE_PRIVATE);
+        email=pref.getString("email",null);
+        dailyCalorie=pref.getInt("dailyCalorie",0);
+        totalCalorie=pref.getInt("calorie",0);
         db = FirebaseFirestore.getInstance();
         bitmap = BitmapFactory.decodeFile(path);
-
 
 
         foodName=(TextView)findViewById(R.id.foodnameid);
@@ -119,25 +127,28 @@ public class AddFoodDetails extends AppCompatActivity {
         tbtotal=(TextView)findViewById(R.id.totalCalorieValue);
         errText=(TextView)findViewById(R.id.fooderrText);
         goneLinear=(LinearLayout)findViewById(R.id.goneLinearLayout);
-        //uploadBitmap(bitmap);
-        //checkgcp();
+        calorieExcess=(TextView)findViewById(R.id.excesscalorietext);
+        foodInfo=(TextView)findViewById(R.id.foodinfo);
+        //send image for prediction
         foodimg.setImageBitmap(bitmap);
         checkgcpwithimage();
 
+        pressureRange=pref.getString("pressureRange"," ");
+        diabetesRange=pref.getString("diabetesRange"," ");
+        getPressureFoods(pressureRange);
 
-        pref= getSharedPreferences("user", MODE_PRIVATE);
-        email=pref.getString("email",null);
 
         session=getsession();
         sessionspinner.setSelection(session);
 
         // perform seek bar change listener event used for getting the progress value
+        qty.setProgress(fprogressValue);
+        qtytextview.setText("0"+grams);
         qty.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
 
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                progressChangedValue = progress;
-                qtytextview.setText(String.valueOf(progress)+"grams.");
+                qtytextview.setText(progress+grams);
 
                 fcalorieValue=calorieMultiFactor*progress;
                 ffatValue=fatMultiFactor*progress;
@@ -145,8 +156,14 @@ public class AddFoodDetails extends AppCompatActivity {
                 fproteinValue=proteinMultiFactor*progress;
                 fcarbohydratesValue=carboMultiFactor*progress;
                 fcholestoralValue=cholestorelMultiFactor*progress;
-
-
+                int diff=totalCalorie-dailyCalorie;
+                if(diff<=fcalorieValue){
+                    addFoodToList.setBackgroundColor(getResources().getColor(R.color.rangelow_high));
+                    calorieExcess.setText("Calorie excess by "+(fcalorieValue-diff));
+                }
+                else{
+                    addFoodToList.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                }
                 tbcalorie.setText(String.format("%.2f",fcalorieValue)+grams);
                 tbfat.setText(String.format("%.2f",ffatValue)+grams);
                 tbfiber.setText(String.format("%.2f",ffiberValue)+grams);
@@ -189,26 +206,95 @@ public class AddFoodDetails extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                loadingbar.setVisibility(View.VISIBLE);
+                // call upload to db , if condition true show alertdialog else directly call uploadtodb method
+                int diff=totalCalorie-dailyCalorie;
+                if(diff<=fcalorieValue){
+                    //addFoodToList.setBackgroundColor(getResources().getColor(R.color.rangelow_high));
+                    //
 
-                String foodnametosend=foodName.getText().toString();
-                String sessiontosend=sessionStringValue;
+                    LayoutInflater li = LayoutInflater.from(AddFoodDetails.this);
+                    View promptsView = li.inflate(R.layout.exercise_dialog, null);
 
-                //update to db
-                uploadfoodtodb(foodnametosend,(int)fcalorieValue,sessiontosend);
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                            AddFoodDetails.this);
+                    alertDialogBuilder.setView(promptsView);
+                    alertDialogBuilder.setCancelable(false);
 
-                File file = new File(path);
-                //File myFile = new File(file,"savedpic.jpg");
-                file.delete();
+                    final Button ok=(Button)promptsView.findViewById(R.id.ok);
+                    final TextView running=(TextView)promptsView.findViewById(R.id.running_value);
+                    final TextView cycling=(TextView)promptsView.findViewById(R.id.cycling_value);
+                    final TextView cleaning=(TextView)promptsView.findViewById(R.id.cleaning_value);
+                    final TextView walking=(TextView)promptsView.findViewById(R.id.walking_value);
+                    final TextView heading=(TextView)promptsView.findViewById(R.id.dia_heading);
 
+                    float excess=fcalorieValue-diff;
+
+                    heading.setText("To burn "+String.format("%.2f",excess)+" excess calories you need to do");
+                    running.setText(String.format("%.2f",excess/runningMultiFactor));
+                    cycling.setText(String.format("%.2f",excess/cyclingMultiFactor));
+                    cleaning.setText(String.format("%.2f",excess/cleaningMultiFactor));
+                    walking.setText(String.format("%.2f",excess/walkingMultiFactor));
+
+
+
+                    final AlertDialog alertDialog = alertDialogBuilder.create();
+                    alertDialog.show();
+                    ok.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            alertDialog.dismiss();
+                            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                            loadingbar.setVisibility(View.VISIBLE);
+                            String foodnametosend=foodName.getText().toString();
+                            String sessiontosend=sessionStringValue;
+
+                            //update to db
+                            uploadfoodtodb(foodnametosend,(int)fcalorieValue,sessiontosend);
+
+                            File file = new File(path);
+                            //File myFile = new File(file,"savedpic.jpg");
+                            file.delete();
+
+                        }
+                    });
+                }
+                    else {
+                    getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                    loadingbar.setVisibility(View.VISIBLE);
+                    String foodnametosend = foodName.getText().toString();
+                    String sessiontosend = sessionStringValue;
+
+                    //update to db
+                    uploadfoodtodb(foodnametosend, (int) fcalorieValue, sessiontosend);
+
+                    File file = new File(path);
+                    //File myFile = new File(file,"savedpic.jpg");
+                    file.delete();
+
+                }
             }
 
 
         });
     }
 
+    private void getPressureFoods(String pressureRange) {
+        String foodpath="";
+        if(pressureRange.equalsIgnoreCase("normal")){
+
+        }
+        else if(pressureRange.equalsIgnoreCase("low")){
+
+        }
+        else if(pressureRange.equalsIgnoreCase("high")){
+
+        }
+        else
+            return ;
+    }
 
 
     //send image for classification---- start
@@ -291,7 +377,7 @@ public class AddFoodDetails extends AppCompatActivity {
 
     //Get calories from db---- start
     private void getCalorieFromDb(String foodname) {
-        db.collection("foodcalories").document(foodname)
+        db.collection("foodcalories").document(foodname.toLowerCase())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
@@ -306,6 +392,8 @@ public class AddFoodDetails extends AppCompatActivity {
                                 fcarbohydratesValue=document.getDouble("carbohydrates").floatValue();
                                 fproteinValue=document.getDouble("protein").floatValue();
                                 fcholestoralValue=document.getDouble("cholesterol").floatValue();
+                                fprogressValue=document.getLong("progressvalue").intValue();
+                                fservingValue=document.getString("servingsize");
 
                                 calorieMultiFactor=fcalorieValue/100;
                                 fatMultiFactor=ffatValue/100;
@@ -323,7 +411,7 @@ public class AddFoodDetails extends AppCompatActivity {
                                 tbprotein.setText(String.format("%.2f",fproteinValue)+grams);
                                 tbcholestoral.setText(String.format("%.2f",fcholestoralValue)+grams);
                                 tbtotal.setText(String.format("%.2f",fcalorieValue)+grams);
-
+                                foodInfo.setText(fservingValue);
 
                             }
 
