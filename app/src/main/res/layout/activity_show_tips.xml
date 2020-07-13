@@ -12,8 +12,10 @@
         android:layout_height="match_parent"
         android:divider="@color/material_blue_grey_800"
 
-        android:dividerHeight="1dp" >
-    </ListView>
+        android:dividerHeight="1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"></ListView>
 
     <LinearLayout
         android:id="@+id/diabetesLinearLayuot"

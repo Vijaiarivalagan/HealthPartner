@@ -66,8 +66,7 @@
                         android:id="@+id/sessionspinner"
                         android:layout_width="181dp"
                         android:layout_height="match_parent"
-
-                        android:entries="@array/session" />
+                        />
                 </LinearLayout>
 
                 <TextView

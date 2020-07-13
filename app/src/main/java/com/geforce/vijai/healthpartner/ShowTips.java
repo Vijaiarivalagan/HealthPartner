@@ -129,7 +129,7 @@ public class ShowTips extends AppCompatActivity {
                                 String[] tipsArray=new String[tipsDataList.size()];
                                 tipsArray=tipsDataList.toArray(tipsArray);
                                 for(int i=0;i<tipsArray.length;i++){
-                                    tipsArray[i]=tipsArray[i].replaceAll("/n","\n");
+                                    tipsArray[i]=tipsArray[i].replaceAll("\\. ","\n");
                                 }
                                 ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(ShowTips.this, R.layout.item_tips_listview, R.id.textView,tipsArray);
                                 simpleList.setAdapter(arrayAdapter);

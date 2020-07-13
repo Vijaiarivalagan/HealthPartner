@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -45,6 +46,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -66,7 +69,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 
-public class AddFoodDetails extends AppCompatActivity {
+public class AddFoodDetails extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private TextView foodName,qtytextview,errText,calorieExcess,foodInfo;
     private SeekBar qty;
@@ -84,6 +87,9 @@ public class AddFoodDetails extends AppCompatActivity {
     private float fcalorieValue,ffatValue,ffiberValue,fproteinValue,fcarbohydratesValue,fcholestoralValue,ftotalValue;
     private int fprogressValue;
     private String fservingValue;
+
+    private List<String> sessionArray = Arrays.asList("BreakFast","Lunch","Dinner");
+
 
     String path=Environment.getExternalStorageDirectory()
             +"/HealthPartner/Photos/savedpic.jpg",sessionStringValue,email;
@@ -138,8 +144,18 @@ public class AddFoodDetails extends AppCompatActivity {
         getPressureFoods(pressureRange);
 
 
-        session=getsession();
+        // set fields
+        //only one field to set - session spinner
+        sessionspinner.setOnItemSelectedListener(this);
+        ArrayAdapter aa = new ArrayAdapter(this,android.R.layout.simple_spinner_item,sessionArray);
+        aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sessionspinner.setAdapter(aa);
+
+        //session=getsession();
+        session = sessionArray.indexOf(getIntent().getStringExtra("session"));
+        System.out.println("sesso" + session);
         sessionspinner.setSelection(session);
+
 
         // perform seek bar change listener event used for getting the progress value
         qty.setProgress(fprogressValue);
@@ -189,7 +205,7 @@ public class AddFoodDetails extends AppCompatActivity {
             }
         });
 
-        sessionspinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        /*sessionspinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
@@ -199,7 +215,7 @@ public class AddFoodDetails extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {
                 sessionspinner.setPrompt("Select appropriate one!!");
             }
-        });
+        });*/
 
         //submit button
         addFoodToList.setOnClickListener(new View.OnClickListener() {
@@ -479,6 +495,15 @@ public class AddFoodDetails extends AppCompatActivity {
         return 0;
     }
 
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        sessionStringValue=sessionspinner.getSelectedItem().toString();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        sessionspinner.setPrompt("Select appropriate one!!");
+    }
 }
 
 

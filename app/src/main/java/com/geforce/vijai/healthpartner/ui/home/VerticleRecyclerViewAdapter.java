@@ -59,7 +59,7 @@ public class VerticleRecyclerViewAdapter extends RecyclerView.Adapter<VerticleRe
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(context, CameraActivity.class);
-                //intent.putExtra("session",title);
+                intent.putExtra("session",title);
                 context.startActivity(intent);
             }
         });

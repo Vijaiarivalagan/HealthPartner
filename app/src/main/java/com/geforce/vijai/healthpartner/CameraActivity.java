@@ -144,7 +144,10 @@ public class CameraActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 takePicture();
-                startActivity(new Intent(CameraActivity.this, AddFoodDetails.class));
+                Intent i = new Intent(CameraActivity.this,AddFoodDetails.class);
+                i.putExtra("session",getIntent().getStringExtra("session"));
+                //startActivity(new Intent(CameraActivity.this, AddFoodDetails.class));
+                startActivity(i);
                 finish();
             }
         });
