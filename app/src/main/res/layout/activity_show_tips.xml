@@ -10,8 +10,9 @@
         android:id="@+id/simpleListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="@color/material_blue_grey_800"
+        android:layout_marginTop="50dp"
 
+        android:divider="@color/material_blue_grey_800"
         android:dividerHeight="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -72,4 +73,18 @@
             android:layout_margin="50dp"
             android:text="High Bp Tips" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/title_text"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:foregroundGravity="center"
+        android:gravity="center"
+        android:text="TextView"
+        android:textColor="@android:color/black"
+        android:textSize="20dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

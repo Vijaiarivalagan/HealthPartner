@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -21,6 +22,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ShowTips extends AppCompatActivity {
 
@@ -31,6 +34,7 @@ public class ShowTips extends AppCompatActivity {
     String path;
     ListView simpleList;
     Button lowbp,highbp,lowsugar,highsugar;
+    TextView titleText;
     String[] simple={"SYMPTOMS:.. Early symptoms include:..  Confusion. Dizziness. Feeling shaky. Hunger. Headaches. Irritability. Pounding heart; racing pulse. Pale skin. Sweating. Trembling. Weakness. Anxiety..  Without treatment, you might get more severe symptoms, including:..  Poor coordination. Poor concentration. Numbness in mouth and tongue. Passing out. Seizures. Nightmares or bad dreams. Coma..",
             "CAUSE:.. skipping meals and snacks. not eating enough food during a meal or snack. exercising longer or harder than usual without eating some extra food. getting too much insulin. not timing the insulin doses properly with meals, snacks, and exercise.",
     " TIPS:..  When your blood sugar level drops below 70 (mg/dL), you will usually have symptoms of low blood sugar. This can develop quickly, in 10 to 15 minutes. occurs when a diabetic has not eaten enough food, or has too much insulin within his or her body. If happened you may feel tired, anxious, weak, shaky, or sweaty, and you may have a rapid heart rate. An excessive amount of exercise can also cause low blood sugar levels. If your blood sugar level continues to drop (usually below 40 mg/dL), your behavior may change, and you may feel more irritable. You may become too weak or confused to eat something with sugar to raise your blood sugar level. Anytime your blood sugar drops below 50 mg/dL, you should act whether you have symptoms or not. If your blood sugar level drops very low (usually below 20 mg/dL), you may lose consciousness or have a seizure. if your blood sugar level has been higher than 300 mg/dL for a week or so and the level drops suddenly to 100 mg/dL, you may have symptoms of low blood sugar even though your blood sugar is in the target range."};
@@ -48,6 +52,7 @@ public class ShowTips extends AppCompatActivity {
         highbp = (Button) findViewById(R.id.highbp);
         lowsugar = (Button) findViewById(R.id.lowsugar);
         highsugar = (Button) findViewById(R.id.highsugar);
+        titleText = (TextView) findViewById(R.id.title_text);
 
         if (path.equalsIgnoreCase("Common")) {
 
@@ -63,12 +68,15 @@ public class ShowTips extends AppCompatActivity {
         } else if (path.equalsIgnoreCase("Blood pressure")) {
 
             simpleList.setVisibility(View.GONE);
+            titleText.setVisibility(View.GONE);
             bpLinearLayout.setVisibility(View.VISIBLE);
 
             lowbp.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     simpleList.setVisibility(View.VISIBLE);
+                    titleText.setText("Low Blood Pressure");
+                    titleText.setVisibility(View.VISIBLE);
                     bpLinearLayout.setVisibility(View.GONE);
                     getTips("bloodpressure", "tips", "bptips", "lowbp");
 
@@ -80,6 +88,8 @@ public class ShowTips extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     simpleList.setVisibility(View.VISIBLE);
+                    titleText.setText("High Blood Pressure");
+                    titleText.setVisibility(View.VISIBLE);
                     bpLinearLayout.setVisibility(View.GONE);
                     getTips("bloodpressure", "tips", "bptips", "highbp");
                 }
@@ -90,6 +100,7 @@ public class ShowTips extends AppCompatActivity {
         else if (path.equalsIgnoreCase("Blood sugar")) {
 
             simpleList.setVisibility(View.GONE);
+            titleText.setVisibility(View.GONE);
             sugarLinearLayout.setVisibility(View.VISIBLE);
 
             lowsugar.setOnClickListener(new View.OnClickListener() {
@@ -97,6 +108,8 @@ public class ShowTips extends AppCompatActivity {
                 public void onClick(View v) {
                     getTips("diabetes", "tips", "sugartips", "lowsugar");
                     simpleList.setVisibility(View.VISIBLE);
+                    titleText.setText("Low Blood Sugar");
+                    titleText.setVisibility(View.VISIBLE);
                     sugarLinearLayout.setVisibility(View.GONE);
 
                 }
@@ -106,6 +119,8 @@ public class ShowTips extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     simpleList.setVisibility(View.VISIBLE);
+                    titleText.setText("High Blood Pressure");
+                    titleText.setVisibility(View.VISIBLE);
                     sugarLinearLayout.setVisibility(View.GONE);
                     getTips("diabetes", "tips", "sugartips", "highsugar");
                 }
@@ -129,7 +144,19 @@ public class ShowTips extends AppCompatActivity {
                                 String[] tipsArray=new String[tipsDataList.size()];
                                 tipsArray=tipsDataList.toArray(tipsArray);
                                 for(int i=0;i<tipsArray.length;i++){
-                                    tipsArray[i]=tipsArray[i].replaceAll("\\. ","\n");
+                                    //tipsArray[i]=tipsArray[i].replaceAll("\\. ","\n");
+
+                                    Pattern p = Pattern.compile("\\. ");
+                                    Matcher m = p.matcher(tipsArray[i]);
+                                    int j=1;
+                                    StringBuffer sb = new StringBuffer();
+                                    while (m.find()) {
+                                        m.appendReplacement(sb, "\n"+j+".");
+                                       //sb.append(m.replaceFirst("\n"+j));
+                                       j++;
+                                    }
+                                    m.appendTail(sb);
+                                    tipsArray[i] = new String(sb);
                                 }
                                 ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(ShowTips.this, R.layout.item_tips_listview, R.id.textView,tipsArray);
                                 simpleList.setAdapter(arrayAdapter);

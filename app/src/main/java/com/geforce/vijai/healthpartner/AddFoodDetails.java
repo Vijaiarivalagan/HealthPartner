@@ -100,7 +100,8 @@ public class AddFoodDetails extends AppCompatActivity implements AdapterView.OnI
     SimpleDateFormat sdf=new SimpleDateFormat("dd-MM-yyyy");
     Bitmap bitmap;
 
-    String ServerImageUploadPath="https://health-partner-c4302.appspot.com/predict" ;
+    String ServerImageUploadPath;//="https://health-partner-c4302.appspot.com/predict" ;
+
     List<String> highBpFood,lowBpFood,lowSugarFood,highSugarFood;
 
     @Override
@@ -137,10 +138,12 @@ public class AddFoodDetails extends AppCompatActivity implements AdapterView.OnI
         foodInfo=(TextView)findViewById(R.id.foodinfo);
         //send image for prediction
         foodimg.setImageBitmap(bitmap);
+        ServerImageUploadPath = pref.getString("modelurl","");
         checkgcpwithimage();
 
         pressureRange=pref.getString("pressureRange"," ");
         diabetesRange=pref.getString("diabetesRange"," ");
+
         getPressureFoods(pressureRange);
 
 

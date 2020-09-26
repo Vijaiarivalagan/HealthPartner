@@ -16,6 +16,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
@@ -142,6 +143,32 @@ public class HomeActivity extends AppCompatActivity implements SensorEventListen
         System.out.println("cal "+pref.getInt("dailyStepcount",0));
 
 
+
+        getModelUrl();
+
+    }
+
+    private void getModelUrl() {
+        db.collection("admin").document("admindoc")
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                        String modelurl = documentSnapshot.getString("modelurl");
+                        System.out.println(modelurl);
+                        editor = pref.edit();
+                        editor.putString("modelurl",modelurl+"/predict");
+                        editor.apply();
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
     }
 
 
